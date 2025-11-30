@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Redirecting...</title>
+    <script>
+      // GitHub Pages SPA routing fix
+      (function() {
+        var path = window.location.pathname;
+        var basePath = '/journalist-portfolio';
+        
+        // Remove base path if present
+        if (path.startsWith(basePath)) {
+          path = path.substring(basePath.length);
+        }
+        
+        // Ensure path starts with /
+        if (!path.startsWith('/')) {
+          path = '/' + path;
+        }
+        
+        // Redirect to index.html with the path
+        var redirectPath = basePath + '/index.html' + path;
+        
+        // Handle root path
+        if (path === '/' || path === '') {
+          redirectPath = basePath + '/index.html';
+        }
+        
+        window.location.replace(redirectPath);
+      })();
+    </script>
+  </head>
+  <body>
+    <p>Redirecting...</p>
+    <noscript>
+      <p>Please enable JavaScript to view this site.</p>
+    </noscript>
+  </body>
+</html>
+

@@ -1,0 +1,87 @@
+# Dependencies
+node_modules
+/.pnp
+.pnp.js
+
+# Testing
+/coverage
+test-*.html
+test-*.js
+*.test.js
+*.test.jsx
+*.spec.js
+*.spec.jsx
+
+# Production
+/dist
+/build
+
+# Misc
+.DS_Store
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+*.log
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Vite
+.vite
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+# Allow .env.example as a template (should be committed)
+!.env.example
+
+# OS
+Thumbs.db
+.DS_Store
+*.swp
+*.swo
+*~
+
+# Documentation and Setup Files (exclude setup guides, keep README and deployment guide)
+FIREBASE_SETUP.md
+SETUP_GUIDE.md
+*_SETUP.md
+*_GUIDE.md
+!README.md
+!GITHUB_DEPLOYMENT.md
+
+# Setup and Helper Scripts
+GOOGLE_APPS_SCRIPT_CORS_FIX.js
+*_FIX.js
+*_SETUP.js
+setup-*.js
+helper-*.js
+
+# Temporary files
+*.tmp
+*.temp
+.cache
+.temp
+
+# Package manager locks (optional - uncomment if you want to ignore)
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml
+
