@@ -137,7 +137,7 @@ const Portfolio = () => {
                       </div>
                     )}
                     <div className="post-content">
-                      <div className="post-meta">
+                      <div className="post-meta mt-4">
                         <time dateTime={post.published_at}>
                           {formatDate(post.published_at)}
                         </time>

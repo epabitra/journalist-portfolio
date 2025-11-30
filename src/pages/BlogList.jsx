@@ -218,7 +218,7 @@ const BlogList = () => {
                           </Link>
                         </div>
                       )}
-                      <div className="post-content">
+                      <div className="post-content mt-4">
                         <div className="post-meta">
                           <time dateTime={post.published_at}>
                             {formatDate(post.published_at)}

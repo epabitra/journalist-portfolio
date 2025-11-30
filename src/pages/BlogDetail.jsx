@@ -131,7 +131,7 @@ const BlogDetail = () => {
             {post.subtitle && (
               <h2 className="post-subtitle">{post.subtitle}</h2>
             )}
-            <div className="post-meta">
+            <div className="post-meta mt-4">
               <time dateTime={post.published_at}>
                 {formatDateTime(post.published_at)}
               </time>
@@ -284,7 +284,7 @@ const BlogDetail = () => {
                       </div>
                     )}
                     <div className="post-content">
-                      <div className="post-meta">
+                      <div className="post-meta mt-4">
                         <time dateTime={relatedPost.published_at}>
                           {formatDate(relatedPost.published_at)}
                         </time>

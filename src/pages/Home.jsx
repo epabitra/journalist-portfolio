@@ -205,7 +205,7 @@ const Home = () => {
                         </Link>
                       </div>
                     )}
-                    <div className="post-content">
+                    <div className="post-content mt-4">
                       <div className="post-meta">
                         <time dateTime={post.published_at}>
                           {formatDate(post.published_at)}
@@ -226,7 +226,7 @@ const Home = () => {
                         <p className="post-excerpt">{post.excerpt}</p>
                       )}
                       {post.read_time_minutes && (
-                        <div className="post-meta" style={{ marginTop: 'auto', paddingTop: 'var(--space-4)' }}>
+                        <div className="post-meta mt-4" style={{ marginTop: 'auto', paddingTop: 'var(--space-4)' }}>
                           <span className="read-time">{post.read_time_minutes} min read</span>
                           {post.view_count && (
                             <span style={{ marginLeft: 'var(--space-3)' }}>👁️ {post.view_count.toLocaleString()} views</span>
