@@ -7,6 +7,22 @@ import ReactDOM from 'react-dom/client';
 import App from './App';
 import './index.css';
 
+// GitHub Pages SPA routing fix - Restore route from sessionStorage
+if (typeof window !== 'undefined' && window.sessionStorage) {
+  const storedPath = sessionStorage.getItem('githubPagesRedirect');
+  if (storedPath) {
+    sessionStorage.removeItem('githubPagesRedirect');
+    const basePath = '/journalist-portfolio';
+    const currentPath = window.location.pathname;
+    
+    // Only restore if we're on index.html
+    if (currentPath.includes('/index.html') || currentPath === basePath + '/') {
+      const newPath = basePath + storedPath + window.location.search + window.location.hash;
+      window.history.replaceState(null, '', newPath);
+    }
+  }
+}
+
 // Error handling for initial render
 try {
   const rootElement = document.getElementById('root');
