@@ -39,7 +39,7 @@ function App() {
       <HelmetProvider>
         <ThemeProvider>
           <AuthProvider>
-            <BrowserRouter basename={import.meta.env.PROD ? "/journalist-portfolio" : ""} future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+            <BrowserRouter basename="" future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
             <ScrollToTop />
             <Routes>
               {/* Public Routes */}
