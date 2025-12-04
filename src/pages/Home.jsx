@@ -11,7 +11,7 @@ import { formatDate } from '@/utils/dateFormatter';
 import { ROUTES } from '@/config/constants';
 import Loading from '@/components/Loading';
 import { ENV } from '@/config/env';
-import { mockProfile, mockPosts, mockSocialLinks, mockStats, mockAwards, mockPublications } from '@/utils/mockData';
+import { mockProfile, mockSocialLinks, mockStats, mockAwards, mockPublications } from '@/utils/mockData';
 
 const Home = () => {
   const [profile, setProfile] = useState(null);
@@ -48,8 +48,7 @@ const Home = () => {
       if (postsData?.success && postsData.data?.length > 0) {
         setPosts(postsData.data);
       } else {
-        setPosts(mockPosts.slice(0, 6));
-        setUseMockData(true);
+        setPosts([]);
       }
 
       if (socialData?.success && socialData.data?.length > 0) {
@@ -60,9 +59,9 @@ const Home = () => {
       }
     } catch (err) {
       console.error('Error loading home data:', err);
-      // Use mock data on error
+      // Use mock data on error for profile and social links only
       setProfile(mockProfile);
-      setPosts(mockPosts.slice(0, 6));
+      setPosts([]);
       setSocialLinks(mockSocialLinks);
       setUseMockData(true);
     } finally {
@@ -75,7 +74,7 @@ const Home = () => {
   }
 
   const displayProfile = profile || mockProfile;
-  const displayPosts = posts.length > 0 ? posts : mockPosts.slice(0, 6);
+  const displayPosts = posts;
   const displaySocialLinks = socialLinks.length > 0 ? socialLinks : mockSocialLinks;
 
   return (
@@ -185,7 +184,7 @@ const Home = () => {
         </section>
 
         {/* Featured Posts Section */}
-        {displayPosts.length > 0 && (
+        {displayPosts.length > 0 ? (
           <section className="section">
             <div className="container">
               <div className="section-header text-center" style={{ marginBottom: 'var(--space-12)' }}>
@@ -244,6 +243,19 @@ const Home = () => {
               <div className="text-center" style={{ marginTop: 'var(--space-12)' }}>
                 <Link to={ROUTES.BLOG} className="btn btn-primary btn-lg">
                   View All Posts
+                </Link>
+              </div>
+            </div>
+          </section>
+        ) : (
+          <section className="section">
+            <div className="container">
+              <div className="text-center" style={{ padding: 'var(--space-12)' }}>
+                <p style={{ fontSize: 'var(--text-lg)', color: 'var(--text-secondary)', marginBottom: 'var(--space-4)' }}>
+                  No posts yet. Check back soon for new stories!
+                </p>
+                <Link to={ROUTES.BLOG} className="btn btn-primary">
+                  View Blog
                 </Link>
               </div>
             </div>
