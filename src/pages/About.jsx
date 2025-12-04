@@ -4,7 +4,8 @@
  */
 
 import { useState, useEffect } from 'react';
-import { Helmet } from 'react-helmet-async';
+import EnhancedHelmet from '@/components/SEO/EnhancedHelmet';
+import SchemaMarkup from '@/components/SEO/SchemaMarkup';
 import { Link } from 'react-router-dom';
 import { publicAPI } from '@/services/api';
 import Loading from '@/components/Loading';
@@ -76,13 +77,40 @@ const About = () => {
     return icons[platform] || '🔗';
   };
 
+  // Prepare schema data
+  const personSchemaData = {
+    name: displayProfile.name || 'Sugyan Sagar',
+    alternateName: ['Sugyansagar'],
+    url: `${ENV.SITE_URL || 'https://synodofberhampur.com'}/about`,
+    image: displayProfile.profile_image_url,
+    jobTitle: displayProfile.title || displayProfile.headline || 'Award-Winning Journalist',
+    description: displayProfile.short_bio || displayProfile.bio || 'Award-winning investigative journalist specializing in human rights, environmental issues, and political reporting.',
+    sameAs: displaySocialLinks
+      .filter(link => link.is_active !== false && link.url)
+      .map(link => link.url),
+    email: displayProfile.email,
+    address: displayProfile.location ? {
+      '@type': 'PostalAddress',
+      addressLocality: displayProfile.location,
+    } : undefined,
+    knowsAbout: ['Journalism', 'Investigative Reporting', 'Human Rights', 'Environmental Issues', 'Politics'],
+    award: mockAwards.map(award => `${award.award} - ${award.organization} (${award.year})`),
+  };
+
   return (
     <>
-      <Helmet>
-        <title>About | {ENV.SITE_NAME}</title>
-        <meta name="description" content={displayProfile.short_bio || displayProfile.bio || 'About the journalist'} />
-        {displayProfile.profile_image_url && <meta property="og:image" content={displayProfile.profile_image_url} />}
-      </Helmet>
+      <EnhancedHelmet
+        title={`About ${displayProfile.name || 'Sugyan Sagar'} - Journalist Profile & Biography`}
+        description={displayProfile.short_bio || displayProfile.bio || `Learn about ${displayProfile.name || 'Sugyan Sagar'}, an award-winning investigative journalist specializing in human rights, environmental issues, and political reporting.`}
+        keywords={`About Sugyan Sagar, Sugyansagar biography, ${displayProfile.name || 'Sugyan Sagar'} journalist, investigative reporter profile, journalism career`}
+        image={displayProfile.profile_image_url}
+        type="profile"
+        author={displayProfile.name || 'Sugyan Sagar'}
+        canonicalUrl={`${ENV.SITE_URL || 'https://synodofberhampur.com'}/about`}
+      />
+      
+      {/* Schema Markup */}
+      <SchemaMarkup type="Person" data={personSchemaData} />
 
       <div className="about-page">
         <div className="section">
@@ -99,7 +127,7 @@ const About = () => {
                 <div className="about-image-wrapper">
                   <img
                     src={displayProfile.profile_image_url}
-                    alt={displayProfile.name || 'Profile'}
+                    alt={`${displayProfile.name || 'Sugyan Sagar'} - Award-winning investigative journalist`}
                     className="about-image"
                     style={{
                       width: '100%',

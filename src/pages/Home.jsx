@@ -5,7 +5,8 @@
 
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Helmet } from 'react-helmet-async';
+import EnhancedHelmet from '@/components/SEO/EnhancedHelmet';
+import SchemaMarkup from '@/components/SEO/SchemaMarkup';
 import { publicAPI } from '@/services/api';
 import { formatDate } from '@/utils/dateFormatter';
 import { ROUTES } from '@/config/constants';
@@ -77,13 +78,43 @@ const Home = () => {
   const displayPosts = posts;
   const displaySocialLinks = socialLinks.length > 0 ? socialLinks : mockSocialLinks;
 
+  // Prepare schema data
+  const personSchemaData = {
+    name: displayProfile.name || 'Sugyan Sagar',
+    alternateName: ['Sugyansagar'],
+    url: ENV.SITE_URL || 'https://synodofberhampur.com',
+    image: displayProfile.profile_image_url,
+    jobTitle: displayProfile.title || displayProfile.headline || 'Award-Winning Journalist',
+    description: displayProfile.short_bio || displayProfile.bio || 'Award-winning investigative journalist specializing in human rights, environmental issues, and political reporting.',
+    sameAs: displaySocialLinks
+      .filter(link => link.is_active !== false && link.url)
+      .map(link => link.url),
+    email: displayProfile.email,
+    knowsAbout: ['Journalism', 'Investigative Reporting', 'Human Rights', 'Environmental Issues', 'Politics'],
+    award: mockAwards.map(award => `${award.award} - ${award.organization} (${award.year})`),
+  };
+
+  const websiteSchemaData = {
+    name: displayProfile.name || 'Sugyan Sagar',
+    alternateName: 'Sugyansagar',
+    url: ENV.SITE_URL || 'https://synodofberhampur.com',
+    description: `${displayProfile.name || 'Sugyan Sagar'} - Award-winning investigative journalist. Explore stories, articles, and multimedia content.`,
+  };
+
   return (
     <>
-      <Helmet>
-        <title>{displayProfile.name} - {ENV.SITE_NAME}</title>
-        <meta name="description" content={displayProfile.short_bio || displayProfile.bio || 'Professional journalist portfolio'} />
-        {displayProfile.profile_image_url && <meta property="og:image" content={displayProfile.profile_image_url} />}
-      </Helmet>
+      <EnhancedHelmet
+        title={`${displayProfile.name || 'Sugyan Sagar'} - Award-Winning Journalist`}
+        description={displayProfile.short_bio || displayProfile.bio || `Sugyan Sagar is an award-winning investigative journalist specializing in human rights, environmental issues, and political reporting. Explore stories, articles, and multimedia content.`}
+        keywords={`Sugyan Sagar, Sugyansagar, ${displayProfile.name || 'Sugyan Sagar'} journalist, investigative reporter, journalism, news, articles, stories, human rights, environment, politics`}
+        image={displayProfile.profile_image_url}
+        type="website"
+        author={displayProfile.name || 'Sugyan Sagar'}
+      />
+      
+      {/* Schema Markup */}
+      <SchemaMarkup type="Person" data={personSchemaData} />
+      <SchemaMarkup type="WebSite" data={websiteSchemaData} />
 
       <div className="home-page">
         {/* Hero Section */}
@@ -93,7 +124,7 @@ const Home = () => {
               <div className="hero-image-wrapper">
                 <img
                   src={displayProfile.profile_image_url}
-                  alt={displayProfile.name || 'Profile'}
+                  alt={`${displayProfile.name || 'Sugyan Sagar'} - Award-winning investigative journalist`}
                   className="hero-image"
                 />
               </div>
@@ -200,7 +231,7 @@ const Home = () => {
                     {post.cover_image_url && (
                       <div className="post-image">
                         <Link to={`${ROUTES.BLOG}/${post.slug}`}>
-                          <img src={post.cover_image_url} alt={post.title} loading="lazy" />
+                          <img src={post.cover_image_url} alt={`${post.title} - By Sugyan Sagar`} loading="lazy" />
                         </Link>
                       </div>
                     )}

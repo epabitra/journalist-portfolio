@@ -4,7 +4,7 @@
  */
 
 import { useState, useEffect } from 'react';
-import { Helmet } from 'react-helmet-async';
+import EnhancedHelmet from '@/components/SEO/EnhancedHelmet';
 import { useForm } from 'react-hook-form';
 import { publicAPI } from '@/services/api';
 import { isValidEmail } from '@/utils/validation';
@@ -71,10 +71,13 @@ const Contact = () => {
 
   return (
     <>
-      <Helmet>
-        <title>Contact | {ENV.SITE_NAME}</title>
-        <meta name="description" content="Get in touch for inquiries, collaborations, or story ideas" />
-      </Helmet>
+      <EnhancedHelmet
+        title="Contact Sugyan Sagar - Get In Touch"
+        description="Contact Sugyan Sagar for media inquiries, collaborations, story ideas, or speaking engagements. Award-winning investigative journalist available for interviews and consultations."
+        keywords="Contact Sugyan Sagar, Sugyansagar contact, journalist contact, media inquiries, collaboration, story ideas"
+        type="website"
+        canonicalUrl={`${ENV.SITE_URL || 'https://synodofberhampur.com'}/contact`}
+      />
 
       <div className="contact-page">
         <div className="section">

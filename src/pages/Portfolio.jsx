@@ -5,7 +5,7 @@
 
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Helmet } from 'react-helmet-async';
+import EnhancedHelmet from '@/components/SEO/EnhancedHelmet';
 import { publicAPI } from '@/services/api';
 import { formatDate } from '@/utils/dateFormatter';
 import { ROUTES } from '@/config/constants';
@@ -71,10 +71,13 @@ const Portfolio = () => {
 
   return (
     <>
-      <Helmet>
-        <title>Portfolio | {ENV.SITE_NAME}</title>
-        <meta name="description" content="Featured stories, investigative reports, and portfolio highlights" />
-      </Helmet>
+      <EnhancedHelmet
+        title="Portfolio - Featured Stories & Work by Sugyan Sagar"
+        description="Explore the portfolio of award-winning journalist Sugyan Sagar. Featured investigative stories, reports, and multimedia content covering human rights, environment, and politics."
+        keywords="Sugyan Sagar portfolio, Sugyansagar work, journalist portfolio, featured stories, investigative journalism portfolio, award-winning journalism"
+        type="website"
+        canonicalUrl={`${ENV.SITE_URL || 'https://synodofberhampur.com'}/portfolio`}
+      />
 
       <div className="portfolio-page">
         <div className="section">
@@ -132,7 +135,7 @@ const Portfolio = () => {
                     {post.cover_image_url && (
                       <div className="post-image">
                         <Link to={`${ROUTES.BLOG}/${post.slug}`}>
-                          <img src={post.cover_image_url} alt={post.title} loading="lazy" />
+                          <img src={post.cover_image_url} alt={`${post.title} - By Sugyan Sagar`} loading="lazy" />
                         </Link>
                       </div>
                     )}

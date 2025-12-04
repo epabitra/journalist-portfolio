@@ -5,7 +5,7 @@
 
 import { useState, useEffect } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-import { Helmet } from 'react-helmet-async';
+import EnhancedHelmet from '@/components/SEO/EnhancedHelmet';
 import { publicAPI } from '@/services/api';
 import { formatDate } from '@/utils/dateFormatter';
 import { ROUTES, PAGINATION } from '@/config/constants';
@@ -114,10 +114,13 @@ const BlogList = () => {
 
   return (
     <>
-      <Helmet>
-        <title>Blog | {ENV.SITE_NAME}</title>
-        <meta name="description" content="Latest news stories, articles, and investigative reports" />
-      </Helmet>
+      <EnhancedHelmet
+        title="Blog - Latest Articles & Investigative Stories"
+        description="Explore the latest articles, investigative reports, and stories by Sugyan Sagar. Award-winning journalism covering human rights, environmental issues, and political reporting."
+        keywords="Sugyan Sagar blog, Sugyansagar articles, journalism stories, investigative reports, news articles, human rights journalism, environmental reporting"
+        type="website"
+        canonicalUrl={`${ENV.SITE_URL || 'https://synodofberhampur.com'}/blog`}
+      />
 
       <div className="blog-list-page">
         <div className="section">
@@ -214,7 +217,7 @@ const BlogList = () => {
                       {post.cover_image_url && (
                         <div className="post-image">
                           <Link to={`${ROUTES.BLOG}/${post.slug}`}>
-                            <img src={post.cover_image_url} alt={post.title} loading="lazy" />
+                            <img src={post.cover_image_url} alt={`${post.title} - By Sugyan Sagar`} loading="lazy" />
                           </Link>
                         </div>
                       )}

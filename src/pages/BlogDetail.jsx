@@ -5,7 +5,8 @@
 
 import { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { Helmet } from 'react-helmet-async';
+import EnhancedHelmet from '@/components/SEO/EnhancedHelmet';
+import SchemaMarkup from '@/components/SEO/SchemaMarkup';
 import ReactMarkdown from 'react-markdown';
 import ReactPlayer from 'react-player';
 import { publicAPI } from '@/services/api';
@@ -106,17 +107,47 @@ const BlogDetail = () => {
     ? post.tags.split(',').map(t => t.trim()).filter(Boolean)
     : Array.isArray(post.tags) ? post.tags : [];
 
+  // Prepare schema data
+  const articleUrl = `${ENV.SITE_URL || 'https://synodofberhampur.com'}${APP_ROUTES.BLOG}/${post.slug}`;
+  const articleSchemaData = {
+    headline: post.seo_title || post.title,
+    description: post.seo_description || post.excerpt || post.title,
+    image: post.cover_image_url || post.media_url,
+    authorName: post.author_name || 'Sugyan Sagar',
+    authorUrl: `${ENV.SITE_URL || 'https://synodofberhampur.com'}/about`,
+    url: articleUrl,
+    datePublished: post.published_at,
+    dateModified: post.updated_at || post.published_at,
+    articleSection: post.category,
+    keywords: tags.length > 0 ? tags.join(', ') : undefined,
+  };
+
+  // Breadcrumb schema
+  const breadcrumbData = {
+    items: [
+      { name: 'Home', url: ENV.SITE_URL || 'https://synodofberhampur.com' },
+      { name: 'Blog', url: `${ENV.SITE_URL || 'https://synodofberhampur.com'}${APP_ROUTES.BLOG}` },
+      { name: post.title, url: articleUrl },
+    ],
+  };
+
   return (
     <>
-      <Helmet>
-        <title>{post.seo_title || post.title} | {ENV.SITE_NAME}</title>
-        <meta name="description" content={post.seo_description || post.excerpt || post.title} />
-        {post.cover_image_url && <meta property="og:image" content={post.cover_image_url} />}
-        <meta property="og:type" content="article" />
-        {post.published_at && (
-          <meta property="article:published_time" content={post.published_at} />
-        )}
-      </Helmet>
+      <EnhancedHelmet
+        title={`${post.seo_title || post.title} | ${ENV.SITE_NAME}`}
+        description={post.seo_description || post.excerpt || post.title}
+        keywords={`${post.seo_title || post.title}, Sugyan Sagar, ${tags.join(', ')}, journalism, news, article`}
+        image={post.cover_image_url || post.media_url}
+        type="article"
+        author={post.author_name || 'Sugyan Sagar'}
+        publishedTime={post.published_at}
+        modifiedTime={post.updated_at || post.published_at}
+        canonicalUrl={articleUrl}
+      />
+      
+      {/* Schema Markup */}
+      <SchemaMarkup type="NewsArticle" data={articleSchemaData} />
+      <SchemaMarkup type="BreadcrumbList" data={breadcrumbData} />
 
       <article className="blog-detail-page">
         <div className="container-narrow">
@@ -174,7 +205,7 @@ const BlogDetail = () => {
               ) : post.media_type === MEDIA_TYPE.IMAGE || post.media_type === 'image' ? (
                 <img 
                   src={post.media_url} 
-                  alt={post.title} 
+                  alt={`${post.title} - By Sugyan Sagar`} 
                   loading="eager"
                 />
               ) : null}
