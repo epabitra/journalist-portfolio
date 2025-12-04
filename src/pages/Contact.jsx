@@ -11,6 +11,7 @@ import { isValidEmail } from '@/utils/validation';
 import { toast } from 'react-toastify';
 import { ENV } from '@/config/env';
 import { mockProfile, mockSocialLinks } from '@/utils/mockData';
+import { getSocialIconFromLink } from '@/utils/socialIcons';
 
 const Contact = () => {
   const [submitting, setSubmitting] = useState(false);
@@ -217,8 +218,9 @@ const Contact = () => {
                         target="_blank"
                         rel="noopener noreferrer"
                         className="btn btn-outline"
+                        title={link.platform}
                       >
-                        {link.icon && <span style={{ marginRight: '4px' }}>{link.icon}</span>}
+                        <span style={{ marginRight: '6px' }}>{getSocialIconFromLink(link)}</span>
                         {link.platform}
                       </a>
                     ))}
