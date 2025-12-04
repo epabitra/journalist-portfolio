@@ -12,9 +12,8 @@ import { ENV } from '@/config/env';
 const apiClient = axios.create({
   baseURL: ENV.API_BASE_URL,
   timeout: API_CONFIG.TIMEOUT,
-  headers: {
-    'Content-Type': 'application/json',
-  },
+  // Don't set default Content-Type header to avoid CORS preflight
+  // Each request will set its own Content-Type as needed
   // Google Apps Script redirects POST requests (302) - we need to follow redirects
   maxRedirects: 5,
   // Accept any status code including redirects (Google Apps Script redirects POST to GET)
@@ -916,6 +915,194 @@ export const adminAPI = {
       return response;
     } catch (error) {
       console.error('Refresh token error:', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Update profile information
+   */
+  updateProfile: async (profileData) => {
+    try {
+      const token = tokenStorage.get();
+      // Use form data to avoid CORS preflight
+      const params = new URLSearchParams();
+      params.append('action', API_ACTIONS.UPDATE_PROFILE);
+      params.append('token', token || '');
+      
+      // Add all profile data fields
+      Object.keys(profileData).forEach(key => {
+        const value = profileData[key];
+        if (value !== null && value !== undefined) {
+          if (Array.isArray(value)) {
+            params.append(key, value.join(', '));
+          } else {
+            params.append(key, String(value));
+          }
+        }
+      });
+      
+      const response = await apiClient.post('', params.toString(), {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+      });
+      return response;
+    } catch (error) {
+      console.error('Update profile error:', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Get profile (admin version - can see all fields)
+   */
+  getProfile: async () => {
+    try {
+      const token = tokenStorage.get();
+      return apiClient.get('', {
+        params: {
+          action: API_ACTIONS.GET_PROFILE,
+          token: token || '',
+        },
+      });
+    } catch (error) {
+      console.error('Get profile error:', error);
+      throw error;
+    }
+  },
+
+  /**
+   * List social links (admin version)
+   */
+  listSocialLinks: async () => {
+    try {
+      const token = tokenStorage.get();
+      return apiClient.get('', {
+        params: {
+          action: API_ACTIONS.LIST_SOCIAL_LINKS,
+          token: token || '',
+        },
+      });
+    } catch (error) {
+      console.error('List social links error:', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Create social link
+   */
+  createSocialLink: async (linkData) => {
+    try {
+      const token = tokenStorage.get();
+      // Use form data to avoid CORS preflight
+      const params = new URLSearchParams();
+      params.append('action', API_ACTIONS.CREATE_SOCIAL_LINK);
+      params.append('token', token || '');
+      
+      // Add all link data fields
+      Object.keys(linkData).forEach(key => {
+        const value = linkData[key];
+        if (value !== null && value !== undefined) {
+          params.append(key, String(value));
+        }
+      });
+      
+      const response = await apiClient.post('', params.toString(), {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+      });
+      return response;
+    } catch (error) {
+      console.error('Create social link error:', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Update social link
+   */
+  updateSocialLink: async (id, linkData) => {
+    try {
+      const token = tokenStorage.get();
+      // Use form data to avoid CORS preflight
+      const params = new URLSearchParams();
+      params.append('action', API_ACTIONS.UPDATE_SOCIAL_LINK);
+      params.append('id', id);
+      params.append('token', token || '');
+      
+      // Add all link data fields
+      Object.keys(linkData).forEach(key => {
+        const value = linkData[key];
+        if (value !== null && value !== undefined) {
+          params.append(key, String(value));
+        }
+      });
+      
+      const response = await apiClient.post('', params.toString(), {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+      });
+      return response;
+    } catch (error) {
+      console.error('Update social link error:', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Delete social link
+   */
+  deleteSocialLink: async (id) => {
+    try {
+      const token = tokenStorage.get();
+      // Use form data to avoid CORS preflight
+      const params = new URLSearchParams();
+      params.append('action', API_ACTIONS.DELETE_SOCIAL_LINK);
+      params.append('id', id);
+      params.append('token', token || '');
+      
+      const response = await apiClient.post('', params.toString(), {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+      });
+      return response;
+    } catch (error) {
+      console.error('Delete social link error:', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Change password
+   */
+  changePassword: async (currentPassword, newPassword, confirmPassword) => {
+    try {
+      const token = tokenStorage.get();
+      if (!token) {
+        throw new Error('Authentication required');
+      }
+
+      // Use form data to avoid CORS preflight
+      const params = new URLSearchParams();
+      params.append('action', API_ACTIONS.CHANGE_PASSWORD);
+      params.append('token', token);
+      params.append('currentPassword', currentPassword);
+      params.append('newPassword', newPassword);
+      params.append('confirmPassword', confirmPassword);
+      
+      const response = await apiClient.post('', params.toString(), {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+      });
+      return response;
+    } catch (error) {
+      console.error('Change password error:', error);
       throw error;
     }
   },

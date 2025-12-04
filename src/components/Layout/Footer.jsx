@@ -7,6 +7,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { publicAPI } from '@/services/api';
 import { ROUTES } from '@/config/constants';
+import { getSocialIconFromLink } from '@/utils/socialIcons';
 
 const Footer = () => {
   const [socialLinks, setSocialLinks] = useState([]);
@@ -53,26 +54,7 @@ const Footer = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const getSocialIcon = (platform) => {
-    const icons = {
-      Twitter: '🐦',
-      LinkedIn: '💼',
-      Facebook: '📘',
-      Instagram: '📷',
-      YouTube: '📺',
-      Email: '✉️',
-    };
-    return icons[platform] || '🔗';
-  };
-
-  const getSocialIconClass = (platform) => {
-    const platformLower = platform?.toLowerCase() || '';
-    if (platformLower.includes('facebook')) return 'fab fa-facebook-f';
-    if (platformLower.includes('twitter')) return 'fab fa-twitter';
-    if (platformLower.includes('linkedin')) return 'fab fa-linkedin-in';
-    if (platformLower.includes('instagram')) return 'fab fa-instagram';
-    return 'fas fa-link';
-  };
+  // Using getSocialIconFromLink utility function from utils/socialIcons.js
 
   const footerLinks = [
     { path: ROUTES.HOME, label: 'Home' },
@@ -111,7 +93,7 @@ const Footer = () => {
                         className="footer-social-icon"
                         aria-label={link.platform}
                       >
-                        <span className="social-icon-emoji">{getSocialIcon(link.platform)}</span>
+                        <span className="social-icon-emoji">{getSocialIconFromLink(link)}</span>
                       </a>
                     ))}
                 </div>

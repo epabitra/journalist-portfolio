@@ -13,6 +13,7 @@ import { ROUTES } from '@/config/constants';
 import Loading from '@/components/Loading';
 import { ENV } from '@/config/env';
 import { mockProfile, mockSocialLinks, mockStats, mockAwards, mockPublications } from '@/utils/mockData';
+import { getSocialIconFromLink } from '@/utils/socialIcons';
 
 const Home = () => {
   const [profile, setProfile] = useState(null);
@@ -150,7 +151,7 @@ const Home = () => {
                         className="hero-social-link"
                         aria-label={link.platform}
                       >
-                        {link.icon && <span style={{ marginRight: '4px' }}>{link.icon}</span>}
+                        <span style={{ marginRight: '6px' }}>{getSocialIconFromLink(link)}</span>
                         {link.platform}
                       </a>
                     ))}
@@ -308,7 +309,11 @@ const Home = () => {
               gap: 'var(--space-6)'
             }}>
               {mockAwards.slice(0, 4).map((award, index) => (
-                <div key={index} className="card" style={{ textAlign: 'center', padding: 'var(--space-6)' }}>
+                <div key={index} className="card" style={{ 
+                  textAlign: 'center', 
+                  padding: 'var(--space-6)',
+                  animation: `fadeIn 0.6s ease-out ${index * 0.15}s both`
+                }}>
                   <div style={{ fontSize: 'var(--text-4xl)', marginBottom: 'var(--space-4)' }}>🏆</div>
                   <div style={{ fontSize: 'var(--text-xl)', fontWeight: 'var(--font-bold)', marginBottom: 'var(--space-2)' }}>
                     {award.award}
@@ -345,7 +350,8 @@ const Home = () => {
                   textAlign: 'center', 
                   padding: 'var(--space-6)',
                   background: 'var(--bg-primary)',
-                  border: '1px solid var(--border-light)'
+                  border: '1px solid var(--border-light)',
+                  animation: `fadeIn 0.6s ease-out ${index * 0.1}s both`
                 }}>
                   <div style={{ fontSize: 'var(--text-4xl)', marginBottom: 'var(--space-3)' }}>{pub.logo}</div>
                   <div style={{ fontSize: 'var(--text-lg)', fontWeight: 'var(--font-semibold)', marginBottom: 'var(--space-2)' }}>

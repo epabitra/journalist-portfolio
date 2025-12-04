@@ -31,6 +31,41 @@ export const isValidPassword = (password) => {
 };
 
 /**
+ * Validates password strength for password change (matches backend requirements)
+ * Minimum 8 characters, at least one uppercase, one lowercase, one number
+ */
+export const validatePasswordStrength = (password) => {
+  if (!password || typeof password !== 'string') {
+    return { valid: false, message: 'Password is required' };
+  }
+  
+  if (password.length < 8) {
+    return { valid: false, message: 'Password must be at least 8 characters long' };
+  }
+  
+  if (password.length > 128) {
+    return { valid: false, message: 'Password must be less than 128 characters' };
+  }
+  
+  // Check for at least one uppercase letter
+  if (!/[A-Z]/.test(password)) {
+    return { valid: false, message: 'Password must contain at least one uppercase letter' };
+  }
+  
+  // Check for at least one lowercase letter
+  if (!/[a-z]/.test(password)) {
+    return { valid: false, message: 'Password must contain at least one lowercase letter' };
+  }
+  
+  // Check for at least one number
+  if (!/[0-9]/.test(password)) {
+    return { valid: false, message: 'Password must contain at least one number' };
+  }
+  
+  return { valid: true, message: 'Password is valid' };
+};
+
+/**
  * Validates URL format
  */
 export const isValidUrl = (url) => {

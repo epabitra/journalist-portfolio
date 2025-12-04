@@ -30,6 +30,7 @@ export const ROUTES = {
   ADMIN_POST_NEW: '/admin/posts/new',
   ADMIN_POST_EDIT: '/admin/posts/:id/edit',
   ADMIN_MEDIA: '/admin/media',
+  ADMIN_PROFILE: '/admin/profile',
 };
 
 export const API_ACTIONS = {
@@ -52,6 +53,12 @@ export const API_ACTIONS = {
   UPLOAD_MEDIA: 'uploadMedia',
   GET_MEDIA_FILES: 'getMediaFiles',
   DELETE_MEDIA: 'deleteMedia',
+  UPDATE_PROFILE: 'updateProfile',
+  LIST_SOCIAL_LINKS: 'listSocialLinks',
+  CREATE_SOCIAL_LINK: 'createSocialLink',
+  UPDATE_SOCIAL_LINK: 'updateSocialLink',
+  DELETE_SOCIAL_LINK: 'deleteSocialLink',
+  CHANGE_PASSWORD: 'changePassword',
 };
 
 export const POST_STATUS = {
@@ -126,6 +133,11 @@ export const SUCCESS_MESSAGES = {
   POST_DELETED: 'Post deleted successfully',
   MEDIA_UPLOADED: 'Media uploaded successfully',
   MEDIA_DELETED: 'Media deleted successfully',
+  PROFILE_UPDATED: 'Profile updated successfully',
+  SOCIAL_LINK_CREATED: 'Social link added successfully',
+  SOCIAL_LINK_UPDATED: 'Social link updated successfully',
+  SOCIAL_LINK_DELETED: 'Social link deleted successfully',
+  PASSWORD_CHANGED: 'Password changed successfully. Please login again.',
 };
 
 export const USER_NAME = "Sugyan Sagar";

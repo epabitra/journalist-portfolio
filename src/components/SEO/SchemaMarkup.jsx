@@ -112,3 +112,4 @@ const SchemaMarkup = ({ type, data }) => {
 
 export default SchemaMarkup;
 
+

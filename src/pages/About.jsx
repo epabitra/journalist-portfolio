@@ -12,6 +12,7 @@ import Loading from '@/components/Loading';
 import { ENV } from '@/config/env';
 import { ROUTES } from '@/config/constants';
 import { mockProfile, mockSocialLinks, mockAwards, mockPublications, mockStats } from '@/utils/mockData';
+import { getSocialIconFromLink } from '@/utils/socialIcons';
 
 const About = () => {
   const [profile, setProfile] = useState(null);
@@ -65,17 +66,8 @@ const About = () => {
   const displayProfile = profile || mockProfile;
   const displaySocialLinks = socialLinks.length > 0 ? socialLinks : mockSocialLinks;
 
-  const getSocialIcon = (platform) => {
-    const icons = {
-      Twitter: '🐦',
-      LinkedIn: '💼',
-      Facebook: '📘',
-      Instagram: '📷',
-      YouTube: '📺',
-      Email: '✉️',
-    };
-    return icons[platform] || '🔗';
-  };
+  // Import the utility function instead of defining locally
+  // getSocialIcon is now imported from utils
 
   // Prepare schema data
   const personSchemaData = {
@@ -178,9 +170,10 @@ const About = () => {
                           rel="noopener noreferrer"
                           className="btn btn-outline"
                           style={{ fontSize: 'var(--text-sm)' }}
+                          title={link.platform}
                         >
                           <span style={{ marginRight: 'var(--space-2)' }}>
-                            {getSocialIcon(link.platform)}
+                            {getSocialIconFromLink(link)}
                           </span>
                           {link.platform}
                         </a>
@@ -251,11 +244,9 @@ const About = () => {
                       gap: 'var(--space-4)'
                     }}>
                       {mockAwards.map((award, index) => (
-                        <div key={index} style={{
+                        <div key={index} className="card" style={{
                           padding: 'var(--space-4)',
-                          background: 'var(--bg-secondary)',
-                          borderRadius: 'var(--radius-lg)',
-                          border: '1px solid var(--border-light)'
+                          animation: `fadeIn 0.6s ease-out ${index * 0.15}s both`
                         }}>
                           <div style={{ fontSize: 'var(--text-2xl)', marginBottom: 'var(--space-2)' }}>🏆</div>
                           <div style={{ fontWeight: 'var(--font-semibold)', marginBottom: 'var(--space-1)' }}>
@@ -280,12 +271,10 @@ const About = () => {
                       gap: 'var(--space-4)'
                     }}>
                       {mockPublications.map((pub, index) => (
-                        <div key={index} style={{
+                        <div key={index} className="card" style={{
                           padding: 'var(--space-4)',
-                          background: 'var(--bg-secondary)',
-                          borderRadius: 'var(--radius-lg)',
                           textAlign: 'center',
-                          border: '1px solid var(--border-light)'
+                          animation: `fadeIn 0.6s ease-out ${index * 0.1}s both`
                         }}>
                           <div style={{ fontSize: 'var(--text-3xl)', marginBottom: 'var(--space-2)' }}>{pub.logo}</div>
                           <div style={{ fontWeight: 'var(--font-semibold)', marginBottom: 'var(--space-1)' }}>
@@ -302,12 +291,9 @@ const About = () => {
               </div>
 
               <div className="about-sidebar">
-                <div className="info-card" style={{
-                  background: 'var(--bg-secondary)',
+                <div className="info-card card" style={{
                   padding: 'var(--space-6)',
-                  borderRadius: 'var(--radius-lg)',
-                  marginBottom: 'var(--space-6)',
-                  border: '1px solid var(--border-light)'
+                  marginBottom: 'var(--space-6)'
                 }}>
                   <h3 style={{ marginBottom: 'var(--space-4)', fontSize: 'var(--text-lg)' }}>Quick Facts</h3>
                   
@@ -357,10 +343,9 @@ const About = () => {
                 </div>
 
                 {/* Stats Card */}
-                <div className="info-card" style={{
+                <div className="info-card card card-gradient" style={{
                   background: 'linear-gradient(135deg, var(--primary-600) 0%, var(--primary-800) 100%)',
                   padding: 'var(--space-6)',
-                  borderRadius: 'var(--radius-lg)',
                   marginBottom: 'var(--space-6)',
                   color: 'white'
                 }}>

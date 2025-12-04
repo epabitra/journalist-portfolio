@@ -52,6 +52,11 @@ const AdminLayout = ({ children }) => {
       label: 'New Post',
       icon: '➕',
     },
+    {
+      path: ROUTES.ADMIN_PROFILE,
+      label: 'Edit Profile',
+      icon: '👤',
+    },
   ];
 
   return (

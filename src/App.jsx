@@ -31,6 +31,7 @@ import AdminLogin from '@/pages/Admin/Login';
 import AdminDashboard from '@/pages/Admin/Dashboard';
 import AdminPostList from '@/pages/Admin/PostList';
 import AdminPostEditor from '@/pages/Admin/PostEditor';
+import AdminProfileEditor from '@/pages/Admin/ProfileEditor';
 import AdminLayout from '@/components/Layout/AdminLayout';
 
 function App() {
@@ -131,6 +132,16 @@ function App() {
                   <ProtectedRoute>
                     <AdminLayout>
                       <AdminPostEditor />
+                    </AdminLayout>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path={ROUTES.ADMIN_PROFILE}
+                element={
+                  <ProtectedRoute>
+                    <AdminLayout>
+                      <AdminProfileEditor />
                     </AdminLayout>
                   </ProtectedRoute>
                 }
