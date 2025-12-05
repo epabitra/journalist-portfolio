@@ -53,6 +53,11 @@ const AdminLayout = ({ children }) => {
       icon: '➕',
     },
     {
+      path: ROUTES.ADMIN_CATEGORIES,
+      label: 'Categories',
+      icon: '🏷️',
+    },
+    {
       path: ROUTES.ADMIN_PROFILE,
       label: 'Edit Profile',
       icon: '👤',

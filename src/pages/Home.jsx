@@ -241,9 +241,14 @@ const Home = () => {
                         <time dateTime={post.published_at}>
                           {formatDate(post.published_at)}
                         </time>
-                        {post.category && (
-                          <span className="post-category">{post.category}</span>
-                        )}
+                        {post.category && (() => {
+                          // Try to find category from posts data if available
+                          // Note: Home page doesn't load categories separately, so we'll just show the name
+                          // If you want icons here, you'd need to load categories in Home component
+                          return (
+                            <span className="post-category">{post.category}</span>
+                          );
+                        })()}
                       </div>
                       <h3>
                         <Link to={`${ROUTES.BLOG}/${post.slug}`}>{post.title}</Link>

@@ -519,27 +519,86 @@ a:hover {
 }
 
 .navbar-brand {
-  font-size: var(--text-xl);
-  font-weight: var(--font-bold);
-  background: var(--gradient-button);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
   display: flex;
   align-items: center;
-  gap: var(--space-2);
+  gap: var(--space-3);
   transition: all var(--transition-base);
   position: relative;
+  text-decoration: none;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
 }
 
 .navbar-brand:hover {
-  transform: scale(1.05);
+  transform: translateY(-2px);
   filter: brightness(1.1);
 }
 
-.navbar-brand span:first-child {
-  font-size: 1.5em;
-  filter: drop-shadow(0 2px 4px rgba(59, 130, 246, 0.5));
+.navbar-brand .brand-icon {
+  font-size: 2rem;
+  line-height: 1;
+  filter: drop-shadow(0 2px 6px rgba(59, 130, 246, 0.4));
+  transition: all var(--transition-base);
+  animation: float 3s ease-in-out infinite;
+}
+
+.navbar-brand:hover .brand-icon {
+  transform: scale(1.1) rotate(5deg);
+  filter: drop-shadow(0 4px 8px rgba(59, 130, 246, 0.6));
+}
+
+.navbar-brand .brand-text {
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 50%, #ec4899 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  position: relative;
+  transition: all var(--transition-base);
+}
+
+.navbar-brand:hover .brand-text {
+  background: linear-gradient(135deg, #2563eb 0%, #7c3aed 50%, #db2777 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.dark-mode .navbar-brand .brand-text {
+  background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 50%, #f472b6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.dark-mode .navbar-brand:hover .brand-text {
+  background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 50%, #ec4899 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Responsive logo sizing */
+@media (max-width: 768px) {
+  .navbar-brand .brand-icon {
+    font-size: 1.75rem;
+  }
+  
+  .navbar-brand .brand-text {
+    font-size: 1.25rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .navbar-brand .brand-icon {
+    font-size: 1.5rem;
+  }
+  
+  .navbar-brand .brand-text {
+    font-size: 1.1rem;
+  }
 }
 
 .navbar-nav {

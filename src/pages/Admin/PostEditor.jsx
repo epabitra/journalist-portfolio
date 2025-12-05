@@ -50,7 +50,7 @@ const AdminPostEditor = () => {
       category: '',
       tags: '',
       status: POST_STATUS.PUBLISHED,
-      type: POST_TYPE.ARTICLE,
+      type: POST_TYPE.BLOG,
       media_type: MEDIA_TYPE.NONE,
       cover_image_url: '',
       media_url: '',
@@ -158,27 +158,13 @@ const AdminPostEditor = () => {
       if (categoriesData?.success && categoriesData.data?.length > 0) {
         setCategories(categoriesData.data);
       } else {
-        // Use mock categories as fallback
-        setCategories([
-          { id: '1', name: 'Investigation', slug: 'investigation' },
-          { id: '2', name: 'Human Rights', slug: 'human-rights' },
-          { id: '3', name: 'Environment', slug: 'environment' },
-          { id: '4', name: 'Politics', slug: 'politics' },
-          { id: '5', name: 'Technology', slug: 'technology' },
-          { id: '6', name: 'Culture', slug: 'culture' },
-        ]);
+        // No categories available - set empty array
+        setCategories([]);
       }
     } catch (error) {
       console.error('Error loading categories:', error);
-      // Use fallback categories
-      setCategories([
-        { id: '1', name: 'Investigation', slug: 'investigation' },
-        { id: '2', name: 'Human Rights', slug: 'human-rights' },
-        { id: '3', name: 'Environment', slug: 'environment' },
-        { id: '4', name: 'Politics', slug: 'politics' },
-        { id: '5', name: 'Technology', slug: 'technology' },
-        { id: '6', name: 'Culture', slug: 'culture' },
-      ]);
+      // Set empty array on error
+      setCategories([]);
     }
   };
 
@@ -198,7 +184,7 @@ const AdminPostEditor = () => {
           category: post.category || '',
           tags: Array.isArray(post.tags) ? post.tags.join(', ') : post.tags || '',
           status: post.status || POST_STATUS.PUBLISHED,
-          type: post.type || POST_TYPE.ARTICLE,
+          type: post.type || POST_TYPE.BLOG,
           media_type: post.media_type || MEDIA_TYPE.NONE,
           cover_image_url: post.cover_image_url || '',
           media_url: post.media_url || '',
@@ -785,17 +771,18 @@ const AdminPostEditor = () => {
                   }}
                 >
                   <option value="">Select a category</option>
-                  {categories
-                    .filter(cat => cat.is_active !== false)
-                    .map((category) => (
+                  {categories.length > 0 ? (
+                    categories.map((category) => (
                       <option 
                         key={category.id || category.slug} 
                         value={category.name || category.slug}
                       >
-                        {category.icon && <span>{category.icon} </span>}
-                        {category.name}
+                        {category.icon ? `${category.icon} ` : ''}{category.name}
                       </option>
-                    ))}
+                    ))
+                  ) : (
+                    <option value="" disabled>No categories available</option>
+                  )}
                 </select>
                 <p style={{ 
                   fontSize: 'var(--text-sm)', 
@@ -824,10 +811,12 @@ const AdminPostEditor = () => {
               <div className="form-group">
                 <label htmlFor="type">Post Type</label>
                 <select id="type" {...register('type')}>
-                  <option value={POST_TYPE.ARTICLE}>Article</option>
-                  <option value={POST_TYPE.VIDEO}>Video</option>
-                  <option value={POST_TYPE.PHOTO_STORY}>Photo Story</option>
+                  <option value={POST_TYPE.BLOG}>Blog</option>
+                  <option value={POST_TYPE.NEWS}>News</option>
                 </select>
+                <p style={{ fontSize: 'var(--text-sm)', color: 'var(--text-secondary)', marginTop: 'var(--space-2)' }}>
+                  Blog posts appear on the Blog page, News posts appear on the News & Updates page
+                </p>
               </div>
 
               <div className="form-group">

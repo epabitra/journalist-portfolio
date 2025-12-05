@@ -33,6 +33,7 @@ const Header = () => {
     { path: ROUTES.HOME, label: 'Home' },
     { path: ROUTES.ABOUT, label: 'About' },
     { path: ROUTES.BLOG, label: 'Blog' },
+    { path: ROUTES.NEWS, label: 'News & Updates' },
     { path: ROUTES.PORTFOLIO, label: 'Portfolio' },
     { path: ROUTES.CONTACT, label: 'Contact' },
   ];
@@ -42,8 +43,8 @@ const Header = () => {
       <nav className="navbar">
         <div className="navbar-container">
           <Link to={ROUTES.HOME} className="navbar-brand">
-            <span>📰</span>
-            <span>Sugyan Sagar</span>
+            <span className="brand-icon">📰</span>
+            <span className="brand-text">Sugyan Sagar</span>
           </Link>
           
           <ul className={`navbar-nav ${mobileMenuOpen ? 'mobile-open' : ''}`}>

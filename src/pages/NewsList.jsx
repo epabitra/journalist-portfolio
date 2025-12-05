@@ -1,6 +1,6 @@
 /**
- * Professional Blog List Page with Realistic Content
- * Modern blog listing with filters, search, and pagination
+ * News & Updates Page
+ * Display news posts with filters, search, and pagination
  */
 
 import { useState, useEffect } from 'react';
@@ -12,7 +12,7 @@ import { ROUTES, PAGINATION } from '@/config/constants';
 import Loading from '@/components/Loading';
 import { ENV } from '@/config/env';
 
-const BlogList = () => {
+const NewsList = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [posts, setPosts] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -40,7 +40,7 @@ const BlogList = () => {
         page: currentPage,
         limit: pagination.limit,
         status: 'published',
-        type: 'blog', // Filter by blog type
+        type: 'news', // Filter by news type
         sort: 'published_at',
         order: 'desc', // Newest first
       };
@@ -87,7 +87,7 @@ const BlogList = () => {
         setCategories([]);
       }
     } catch (err) {
-      console.error('Error loading blog posts:', err);
+      console.error('Error loading news posts:', err);
       setError(err.message || 'Failed to load posts');
       setPosts([]);
       setCategories([]);
@@ -110,26 +110,26 @@ const BlogList = () => {
   const displayCategories = categories;
 
   if (loading && posts.length === 0) {
-    return <Loading fullScreen message="Loading posts..." />;
+    return <Loading fullScreen message="Loading news..." />;
   }
 
   return (
     <>
       <EnhancedHelmet
-        title="Blog - Latest Articles & Investigative Stories"
-        description="Explore the latest articles, investigative reports, and stories by Sugyan Sagar. Award-winning journalism covering human rights, environmental issues, and political reporting."
-        keywords="Sugyan Sagar blog, Sugyansagar articles, journalism stories, investigative reports, news articles, human rights journalism, environmental reporting"
+        title="News & Updates - Latest News & Breaking Stories"
+        description="Stay updated with the latest news, breaking stories, and updates by Sugyan Sagar. Real-time coverage of important events, political developments, and current affairs."
+        keywords="Sugyan Sagar news, Sugyansagar updates, breaking news, latest news, current affairs, news updates, journalism news"
         type="website"
-        canonicalUrl={`${ENV.SITE_URL || 'https://synodofberhampur.com'}/blog`}
+        canonicalUrl={`${ENV.SITE_URL || 'https://synodofberhampur.com'}/news`}
       />
 
       <div className="blog-list-page">
         <div className="section">
           <div className="container">
             <div className="section-header text-center" style={{ marginBottom: 'var(--space-12)' }}>
-              <h1>Blog</h1>
+              <h1>News & Updates</h1>
               <p style={{ color: 'var(--text-secondary)', maxWidth: '600px', margin: 'var(--space-4) auto 0', fontSize: 'var(--text-lg)' }}>
-                Explore my latest stories, investigative reports, and feature articles covering politics, human rights, environment, and more.
+                Stay updated with the latest news, breaking stories, and important updates covering current events, politics, and more.
               </p>
             </div>
 
@@ -140,7 +140,7 @@ const BlogList = () => {
                   onClick={() => handleCategoryChange('')}
                   className={!selectedCategory ? 'active' : ''}
                 >
-                  All Posts
+                  All News
                 </button>
                 {displayCategories.map((category) => {
                   const categoryValue = category.name || category.slug;
@@ -307,7 +307,7 @@ const BlogList = () => {
             ) : (
               <div className="text-center" style={{ padding: 'var(--space-12)' }}>
                 <p style={{ fontSize: 'var(--text-lg)', color: 'var(--text-secondary)' }}>
-                  No posts found{selectedCategory ? ` in this category` : ''}.
+                  No news posts found{selectedCategory ? ` in this category` : ''}.
                 </p>
                 {selectedCategory && (
                   <button
@@ -315,7 +315,7 @@ const BlogList = () => {
                     className="btn btn-primary"
                     style={{ marginTop: 'var(--space-4)' }}
                   >
-                    View All Posts
+                    View All News
                   </button>
                 )}
               </div>
@@ -327,4 +327,5 @@ const BlogList = () => {
   );
 };
 
-export default BlogList;
+export default NewsList;
+

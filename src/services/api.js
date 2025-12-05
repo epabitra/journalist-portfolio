@@ -855,6 +855,101 @@ export const adminAPI = {
   },
 
   /**
+   * Create category
+   */
+  createCategory: async (categoryData) => {
+    try {
+      const token = tokenStorage.get();
+      // Use form data to avoid CORS preflight
+      const params = new URLSearchParams();
+      params.append('action', API_ACTIONS.CREATE_CATEGORY);
+      params.append('token', token || '');
+      
+      // Add all category data fields
+      Object.keys(categoryData).forEach(key => {
+        const value = categoryData[key];
+        if (value !== null && value !== undefined) {
+          if (Array.isArray(value)) {
+            params.append(key, value.join(', '));
+          } else {
+            params.append(key, String(value));
+          }
+        }
+      });
+      
+      const response = await apiClient.post('', params.toString(), {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+      });
+      return response;
+    } catch (error) {
+      console.error('Create category error:', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Update category
+   */
+  updateCategory: async (id, categoryData) => {
+    try {
+      const token = tokenStorage.get();
+      // Use form data to avoid CORS preflight
+      const params = new URLSearchParams();
+      params.append('action', API_ACTIONS.UPDATE_CATEGORY);
+      params.append('token', token || '');
+      params.append('id', id);
+      
+      // Add all category data fields
+      Object.keys(categoryData).forEach(key => {
+        const value = categoryData[key];
+        if (value !== null && value !== undefined) {
+          if (Array.isArray(value)) {
+            params.append(key, value.join(', '));
+          } else {
+            params.append(key, String(value));
+          }
+        }
+      });
+      
+      const response = await apiClient.post('', params.toString(), {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+      });
+      return response;
+    } catch (error) {
+      console.error('Update category error:', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Delete category
+   */
+  deleteCategory: async (id) => {
+    try {
+      const token = tokenStorage.get();
+      // Use form data to avoid CORS preflight
+      const params = new URLSearchParams();
+      params.append('action', API_ACTIONS.DELETE_CATEGORY);
+      params.append('id', id);
+      params.append('token', token || '');
+      
+      const response = await apiClient.post('', params.toString(), {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+      });
+      return response;
+    } catch (error) {
+      console.error('Delete category error:', error);
+      throw error;
+    }
+  },
+
+  /**
    * Get media files
    */
   getMediaFiles: async (params = {}) => {

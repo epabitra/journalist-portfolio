@@ -22,6 +22,8 @@ export const ROUTES = {
   ABOUT: '/about',
   BLOG: '/blog',
   BLOG_DETAIL: '/blog/:slug',
+  NEWS: '/news',
+  NEWS_DETAIL: '/news/:slug',
   PORTFOLIO: '/portfolio',
   CONTACT: '/contact',
   ADMIN_LOGIN: '/admin/login',
@@ -30,6 +32,9 @@ export const ROUTES = {
   ADMIN_POST_NEW: '/admin/posts/new',
   ADMIN_POST_EDIT: '/admin/posts/:id/edit',
   ADMIN_MEDIA: '/admin/media',
+  ADMIN_CATEGORIES: '/admin/categories',
+  ADMIN_CATEGORY_NEW: '/admin/categories/new',
+  ADMIN_CATEGORY_EDIT: '/admin/categories/:id/edit',
   ADMIN_PROFILE: '/admin/profile',
 };
 
@@ -59,6 +64,9 @@ export const API_ACTIONS = {
   UPDATE_SOCIAL_LINK: 'updateSocialLink',
   DELETE_SOCIAL_LINK: 'deleteSocialLink',
   CHANGE_PASSWORD: 'changePassword',
+  CREATE_CATEGORY: 'createCategory',
+  UPDATE_CATEGORY: 'updateCategory',
+  DELETE_CATEGORY: 'deleteCategory',
 };
 
 export const POST_STATUS = {
@@ -68,9 +76,8 @@ export const POST_STATUS = {
 };
 
 export const POST_TYPE = {
-  ARTICLE: 'article',
-  VIDEO: 'video',
-  PHOTO_STORY: 'photo-story',
+  BLOG: 'blog',
+  NEWS: 'news',
 };
 
 export const MEDIA_TYPE = {

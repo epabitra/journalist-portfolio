@@ -23,6 +23,7 @@ import Home from '@/pages/Home';
 import About from '@/pages/About';
 import BlogList from '@/pages/BlogList';
 import BlogDetail from '@/pages/BlogDetail';
+import NewsList from '@/pages/NewsList';
 import Portfolio from '@/pages/Portfolio';
 import Contact from '@/pages/Contact';
 
@@ -31,6 +32,8 @@ import AdminLogin from '@/pages/Admin/Login';
 import AdminDashboard from '@/pages/Admin/Dashboard';
 import AdminPostList from '@/pages/Admin/PostList';
 import AdminPostEditor from '@/pages/Admin/PostEditor';
+import AdminCategoryList from '@/pages/Admin/CategoryList';
+import AdminCategoryEditor from '@/pages/Admin/CategoryEditor';
 import AdminProfileEditor from '@/pages/Admin/ProfileEditor';
 import AdminLayout from '@/components/Layout/AdminLayout';
 
@@ -73,6 +76,14 @@ function App() {
                 element={
                   <MainLayout>
                     <BlogDetail />
+                  </MainLayout>
+                }
+              />
+              <Route
+                path={ROUTES.NEWS}
+                element={
+                  <MainLayout>
+                    <NewsList />
                   </MainLayout>
                 }
               />
@@ -132,6 +143,36 @@ function App() {
                   <ProtectedRoute>
                     <AdminLayout>
                       <AdminPostEditor />
+                    </AdminLayout>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path={ROUTES.ADMIN_CATEGORIES}
+                element={
+                  <ProtectedRoute>
+                    <AdminLayout>
+                      <AdminCategoryList />
+                    </AdminLayout>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path={ROUTES.ADMIN_CATEGORY_NEW}
+                element={
+                  <ProtectedRoute>
+                    <AdminLayout>
+                      <AdminCategoryEditor />
+                    </AdminLayout>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path={ROUTES.ADMIN_CATEGORY_EDIT}
+                element={
+                  <ProtectedRoute>
+                    <AdminLayout>
+                      <AdminCategoryEditor />
                     </AdminLayout>
                   </ProtectedRoute>
                 }
