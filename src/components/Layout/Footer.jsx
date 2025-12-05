@@ -101,7 +101,7 @@ const Footer = () => {
             </div>
 
             {/* Column 2: Categories/Skills */}
-            <div className="footer-section">
+            <div className="footer-section footer-expertise">
               <h3 className="footer-section-title">My Expertise</h3>
               <ul className="footer-list">
                 {categories.length > 0 ? (
@@ -129,7 +129,7 @@ const Footer = () => {
             </div>
 
             {/* Column 3: Quick Links */}
-            <div className="footer-section">
+            <div className="footer-section footer-links">
               <h3 className="footer-section-title">Quick Links</h3>
               <ul className="footer-list">
                 {footerLinks.map((link) => (
@@ -144,7 +144,7 @@ const Footer = () => {
             </div>
 
             {/* Column 4: Address/Contact */}
-            <div className="footer-section">
+            <div className="footer-section footer-address">
               <h3 className="footer-section-title">Address</h3>
               <div className="footer-contact">
                 {displayLocation && (
