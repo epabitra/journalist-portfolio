@@ -535,7 +535,7 @@ a:hover {
 }
 
 .navbar-brand .brand-icon {
-  font-size: 2rem;
+  font-size: var(--text-5xl);
   line-height: 1;
   filter: drop-shadow(0 2px 6px rgba(59, 130, 246, 0.4));
   transition: all var(--transition-base);
@@ -548,15 +548,16 @@ a:hover {
 }
 
 .navbar-brand .brand-text {
-  font-size: 1.5rem;
-  font-weight: 700;
-  letter-spacing: -0.02em;
+  font-size: var(--text-5xl);
+  font-weight: var(--font-extrabold);
+  letter-spacing: -0.025em;
   background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 50%, #ec4899 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
   position: relative;
   transition: all var(--transition-base);
+  line-height: var(--leading-tight);
 }
 
 .navbar-brand:hover .brand-text {
@@ -583,21 +584,21 @@ a:hover {
 /* Responsive logo sizing */
 @media (max-width: 768px) {
   .navbar-brand .brand-icon {
-    font-size: 1.75rem;
+    font-size: var(--text-4xl);
   }
   
   .navbar-brand .brand-text {
-    font-size: 1.25rem;
+    font-size: var(--text-4xl);
   }
 }
 
 @media (max-width: 480px) {
   .navbar-brand .brand-icon {
-    font-size: 1.5rem;
+    font-size: var(--text-3xl);
   }
   
   .navbar-brand .brand-text {
-    font-size: 1.1rem;
+    font-size: var(--text-3xl);
   }
 }
 
