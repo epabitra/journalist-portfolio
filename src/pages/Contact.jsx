@@ -10,6 +10,7 @@ import { publicAPI } from '@/services/api';
 import { isValidEmail } from '@/utils/validation';
 import { toast } from 'react-toastify';
 import { ENV } from '@/config/env';
+import Loading from '@/components/Loading';
 // Profile and social links are now fully dynamic - no mock data fallbacks
 import { getSocialIconFromLink } from '@/utils/socialIcons';
 
@@ -17,6 +18,7 @@ const Contact = () => {
   const [submitting, setSubmitting] = useState(false);
   const [profile, setProfile] = useState(null);
   const [socialLinks, setSocialLinks] = useState([]);
+  const [loading, setLoading] = useState(true);
   const {
     register,
     handleSubmit,
@@ -30,6 +32,7 @@ const Contact = () => {
 
   const loadData = async () => {
     try {
+      setLoading(true);
       const [profileData, socialData] = await Promise.all([
         publicAPI.getProfile().catch(() => null),
         publicAPI.getSocialLinks().catch(() => null),
@@ -51,6 +54,8 @@ const Contact = () => {
       // Set to null/empty on error - no mock data fallbacks
       setProfile(null);
       setSocialLinks([]);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -71,6 +76,10 @@ const Contact = () => {
 
   const displayProfile = profile;
   const displaySocialLinks = socialLinks;
+
+  if (loading) {
+    return <Loading fullScreen message="Loading contact information..." />;
+  }
 
   return (
     <>

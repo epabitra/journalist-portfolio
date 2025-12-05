@@ -109,7 +109,7 @@ const BlogList = () => {
   const displayPosts = posts;
   const displayCategories = categories;
 
-  if (loading && posts.length === 0) {
+  if (loading) {
     return <Loading fullScreen message="Loading posts..." />;
   }
 
