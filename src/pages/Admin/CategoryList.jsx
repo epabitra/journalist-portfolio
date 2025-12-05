@@ -213,3 +213,4 @@ const AdminCategoryList = () => {
 
 export default AdminCategoryList;
 
+

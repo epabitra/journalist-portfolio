@@ -245,35 +245,143 @@ const BlogDetail = () => {
           )}
 
           {/* Share Section */}
-          <div style={{
-            marginTop: 'var(--space-8)',
-            padding: 'var(--space-6)',
-            background: 'var(--bg-secondary)',
-            borderRadius: 'var(--radius-lg)',
-            textAlign: 'center'
-          }}>
-            <h3 style={{ marginBottom: 'var(--space-4)', fontSize: 'var(--text-lg)' }}>Share This Story</h3>
-            <div style={{ display: 'flex', gap: 'var(--space-3)', justifyContent: 'center', flexWrap: 'wrap' }}>
-              <a href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(post.title)}&url=${encodeURIComponent(window.location.href)}`} 
-                 target="_blank" 
-                 rel="noopener noreferrer"
-                 className="btn btn-outline">
-                🐦 Twitter
-              </a>
-              <a href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`}
-                 target="_blank"
-                 rel="noopener noreferrer"
-                 className="btn btn-outline">
-                📘 Facebook
-              </a>
-              <a href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(window.location.href)}`}
-                 target="_blank"
-                 rel="noopener noreferrer"
-                 className="btn btn-outline">
-                💼 LinkedIn
-              </a>
-            </div>
-          </div>
+          {(() => {
+            // Prepare share data - use absolute URL for better compatibility
+            const shareUrl = articleUrl || window.location.href;
+            const shareTitle = post.title || '';
+            const shareDescription = post.excerpt || post.subtitle || post.title || '';
+            const shareText = `${shareTitle}${shareDescription ? ` - ${shareDescription}` : ''}`;
+            
+            // Build share URLs with proper parameters
+            const shareLinks = {
+              twitter: `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`,
+              facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}&quote=${encodeURIComponent(shareText)}`,
+              // LinkedIn: Use simpler format - LinkedIn will fetch OG tags from the URL
+              linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`,
+              whatsapp: `https://wa.me/?text=${encodeURIComponent(`${shareText} ${shareUrl}`)}`,
+              telegram: `https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareText)}`,
+              email: `mailto:?subject=${encodeURIComponent(shareTitle)}&body=${encodeURIComponent(`${shareDescription}\n\nRead more: ${shareUrl}`)}`,
+              reddit: `https://reddit.com/submit?url=${encodeURIComponent(shareUrl)}&title=${encodeURIComponent(shareTitle)}`,
+            };
+
+            // Copy to clipboard function
+            const handleCopyLink = async () => {
+              try {
+                await navigator.clipboard.writeText(shareUrl);
+                // You could add a toast notification here
+                alert('Link copied to clipboard!');
+              } catch (err) {
+                console.error('Failed to copy:', err);
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = shareUrl;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                alert('Link copied to clipboard!');
+              }
+            };
+
+            return (
+              <div style={{
+                marginTop: 'var(--space-8)',
+                padding: 'var(--space-6)',
+                background: 'var(--bg-secondary)',
+                borderRadius: 'var(--radius-lg)',
+                textAlign: 'center'
+              }}>
+                <h3 style={{ marginBottom: 'var(--space-4)', fontSize: 'var(--text-lg)', fontWeight: 'var(--font-semibold)' }}>Share This Story</h3>
+                <p style={{ 
+                  fontSize: 'var(--text-sm)', 
+                  color: 'var(--text-secondary)', 
+                  marginBottom: 'var(--space-6)',
+                  maxWidth: '600px',
+                  margin: '0 auto var(--space-6)'
+                }}>
+                  Help spread the word by sharing this story on your favorite platforms
+                </p>
+                <div style={{ display: 'flex', gap: 'var(--space-3)', justifyContent: 'center', flexWrap: 'wrap' }}>
+                  <a 
+                    href={shareLinks.twitter}
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="btn btn-outline"
+                    style={{ minWidth: '120px' }}
+                    title="Share on Twitter"
+                  >
+                    🐦 Twitter
+                  </a>
+                  <a 
+                    href={shareLinks.facebook}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn btn-outline"
+                    style={{ minWidth: '120px' }}
+                    title="Share on Facebook"
+                  >
+                    📘 Facebook
+                  </a>
+                  <a 
+                    href={shareLinks.linkedin}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn btn-outline"
+                    style={{ minWidth: '120px' }}
+                    title="Share on LinkedIn"
+                  >
+                    💼 LinkedIn
+                  </a>
+                  <a 
+                    href={shareLinks.whatsapp}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn btn-outline"
+                    style={{ minWidth: '120px' }}
+                    title="Share on WhatsApp"
+                  >
+                    💬 WhatsApp
+                  </a>
+                  <a 
+                    href={shareLinks.telegram}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn btn-outline"
+                    style={{ minWidth: '120px' }}
+                    title="Share on Telegram"
+                  >
+                    ✈️ Telegram
+                  </a>
+                  <a 
+                    href={shareLinks.reddit}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn btn-outline"
+                    style={{ minWidth: '120px' }}
+                    title="Share on Reddit"
+                  >
+                    🤖 Reddit
+                  </a>
+                  <a 
+                    href={shareLinks.email}
+                    className="btn btn-outline"
+                    style={{ minWidth: '120px' }}
+                    title="Share via Email"
+                  >
+                    📧 Email
+                  </a>
+                  <button
+                    onClick={handleCopyLink}
+                    className="btn btn-outline"
+                    style={{ minWidth: '120px' }}
+                    title="Copy link to clipboard"
+                  >
+                    📋 Copy Link
+                  </button>
+                </div>
+              </div>
+            );
+          })()}
 
           {/* Navigation */}
           <div style={{ 

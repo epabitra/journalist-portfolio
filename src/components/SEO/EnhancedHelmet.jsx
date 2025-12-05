@@ -30,8 +30,12 @@ const EnhancedHelmet = ({
   // Default keywords including name variations
   const defaultKeywords = keywords || 'Sugyan Sagar, Sugyansagar, journalist, investigative reporter, journalism, news, articles, stories, human rights, environment, politics';
   
-  // Default image
-  const ogImage = image || `${siteUrl}/og-image.jpg`;
+  // Default image - ensure absolute URL
+  let ogImage = image || `${siteUrl}/og-image.jpg`;
+  // If image is provided but not absolute, make it absolute
+  if (image && !image.startsWith('http://') && !image.startsWith('https://')) {
+    ogImage = image.startsWith('/') ? `${siteUrl}${image}` : `${siteUrl}/${image}`;
+  }
 
   return (
     <Helmet>
