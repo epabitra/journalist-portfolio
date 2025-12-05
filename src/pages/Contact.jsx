@@ -10,7 +10,7 @@ import { publicAPI } from '@/services/api';
 import { isValidEmail } from '@/utils/validation';
 import { toast } from 'react-toastify';
 import { ENV } from '@/config/env';
-import { mockProfile, mockSocialLinks } from '@/utils/mockData';
+// Profile and social links are now fully dynamic - no mock data fallbacks
 import { getSocialIconFromLink } from '@/utils/socialIcons';
 
 const Contact = () => {
@@ -35,20 +35,22 @@ const Contact = () => {
         publicAPI.getSocialLinks().catch(() => null),
       ]);
 
+      // Use API data only - no mock fallbacks for dynamic content
       if (profileData?.success && profileData.data) {
         setProfile(profileData.data);
       } else {
-        setProfile(mockProfile);
+        setProfile(null);
       }
 
       if (socialData?.success && socialData.data?.length > 0) {
         setSocialLinks(socialData.data);
       } else {
-        setSocialLinks(mockSocialLinks);
+        setSocialLinks([]);
       }
     } catch (error) {
-      setProfile(mockProfile);
-      setSocialLinks(mockSocialLinks);
+      // Set to null/empty on error - no mock data fallbacks
+      setProfile(null);
+      setSocialLinks([]);
     }
   };
 
@@ -67,8 +69,8 @@ const Contact = () => {
     }
   };
 
-  const displayProfile = profile || mockProfile;
-  const displaySocialLinks = socialLinks.length > 0 ? socialLinks : mockSocialLinks;
+  const displayProfile = profile;
+  const displaySocialLinks = socialLinks;
 
   return (
     <>
@@ -109,7 +111,7 @@ const Contact = () => {
               }}>
                 <h2 style={{ marginBottom: 'var(--space-6)' }}>Contact Information</h2>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-6)' }}>
-                  {displayProfile.email && (
+                  {displayProfile?.email && (
                     <div>
                       <h3 style={{ fontSize: 'var(--text-sm)', color: 'var(--text-tertiary)', marginBottom: 'var(--space-2)' }}>
                         Email
@@ -119,7 +121,7 @@ const Contact = () => {
                       </a>
                     </div>
                   )}
-                  {displayProfile.phone && (
+                  {displayProfile?.phone && (
                     <div>
                       <h3 style={{ fontSize: 'var(--text-sm)', color: 'var(--text-tertiary)', marginBottom: 'var(--space-2)' }}>
                         Phone
@@ -129,7 +131,7 @@ const Contact = () => {
                       </a>
                     </div>
                   )}
-                  {displayProfile.location && (
+                  {displayProfile?.location && (
                     <div>
                       <h3 style={{ fontSize: 'var(--text-sm)', color: 'var(--text-tertiary)', marginBottom: 'var(--space-2)' }}>
                         Location
@@ -199,7 +201,7 @@ const Contact = () => {
             </div>
 
             {/* Social Links */}
-            {displaySocialLinks.length > 0 && (
+            {displaySocialLinks && displaySocialLinks.length > 0 && (
               <div style={{
                 textAlign: 'center',
                 marginBottom: 'var(--space-12)',

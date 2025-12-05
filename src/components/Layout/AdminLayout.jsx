@@ -58,6 +58,16 @@ const AdminLayout = ({ children }) => {
       icon: '🏷️',
     },
     {
+      path: ROUTES.ADMIN_AWARDS,
+      label: 'Awards',
+      icon: '🏆',
+    },
+    {
+      path: ROUTES.ADMIN_PUBLICATIONS,
+      label: 'Publications',
+      icon: '📰',
+    },
+    {
       path: ROUTES.ADMIN_PROFILE,
       label: 'Edit Profile',
       icon: '👤',

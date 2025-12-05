@@ -35,6 +35,12 @@ export const ROUTES = {
   ADMIN_CATEGORIES: '/admin/categories',
   ADMIN_CATEGORY_NEW: '/admin/categories/new',
   ADMIN_CATEGORY_EDIT: '/admin/categories/:id/edit',
+  ADMIN_AWARDS: '/admin/awards',
+  ADMIN_AWARD_NEW: '/admin/awards/new',
+  ADMIN_AWARD_EDIT: '/admin/awards/:id/edit',
+  ADMIN_PUBLICATIONS: '/admin/publications',
+  ADMIN_PUBLICATION_NEW: '/admin/publications/new',
+  ADMIN_PUBLICATION_EDIT: '/admin/publications/:id/edit',
   ADMIN_PROFILE: '/admin/profile',
 };
 
@@ -45,6 +51,8 @@ export const API_ACTIONS = {
   GET_PROFILE: 'getProfile',
   GET_SOCIAL_LINKS: 'getSocialLinks',
   GET_CATEGORIES: 'getCategories',
+  GET_AWARDS: 'getAwards',
+  GET_PUBLICATIONS: 'getPublications',
   GET_TAGS: 'getTags',
   SEARCH_POSTS: 'searchPosts',
   
@@ -67,6 +75,12 @@ export const API_ACTIONS = {
   CREATE_CATEGORY: 'createCategory',
   UPDATE_CATEGORY: 'updateCategory',
   DELETE_CATEGORY: 'deleteCategory',
+  CREATE_AWARD: 'createAward',
+  UPDATE_AWARD: 'updateAward',
+  DELETE_AWARD: 'deleteAward',
+  CREATE_PUBLICATION: 'createPublication',
+  UPDATE_PUBLICATION: 'updatePublication',
+  DELETE_PUBLICATION: 'deletePublication',
 };
 
 export const POST_STATUS = {

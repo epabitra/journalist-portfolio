@@ -34,6 +34,10 @@ import AdminPostList from '@/pages/Admin/PostList';
 import AdminPostEditor from '@/pages/Admin/PostEditor';
 import AdminCategoryList from '@/pages/Admin/CategoryList';
 import AdminCategoryEditor from '@/pages/Admin/CategoryEditor';
+import AdminAwardList from '@/pages/Admin/AwardList';
+import AdminAwardEditor from '@/pages/Admin/AwardEditor';
+import AdminPublicationList from '@/pages/Admin/PublicationList';
+import AdminPublicationEditor from '@/pages/Admin/PublicationEditor';
 import AdminProfileEditor from '@/pages/Admin/ProfileEditor';
 import AdminLayout from '@/components/Layout/AdminLayout';
 
@@ -173,6 +177,66 @@ function App() {
                   <ProtectedRoute>
                     <AdminLayout>
                       <AdminCategoryEditor />
+                    </AdminLayout>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path={ROUTES.ADMIN_AWARDS}
+                element={
+                  <ProtectedRoute>
+                    <AdminLayout>
+                      <AdminAwardList />
+                    </AdminLayout>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path={ROUTES.ADMIN_AWARD_NEW}
+                element={
+                  <ProtectedRoute>
+                    <AdminLayout>
+                      <AdminAwardEditor />
+                    </AdminLayout>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path={ROUTES.ADMIN_AWARD_EDIT}
+                element={
+                  <ProtectedRoute>
+                    <AdminLayout>
+                      <AdminAwardEditor />
+                    </AdminLayout>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path={ROUTES.ADMIN_PUBLICATIONS}
+                element={
+                  <ProtectedRoute>
+                    <AdminLayout>
+                      <AdminPublicationList />
+                    </AdminLayout>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path={ROUTES.ADMIN_PUBLICATION_NEW}
+                element={
+                  <ProtectedRoute>
+                    <AdminLayout>
+                      <AdminPublicationEditor />
+                    </AdminLayout>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path={ROUTES.ADMIN_PUBLICATION_EDIT}
+                element={
+                  <ProtectedRoute>
+                    <AdminLayout>
+                      <AdminPublicationEditor />
                     </AdminLayout>
                   </ProtectedRoute>
                 }

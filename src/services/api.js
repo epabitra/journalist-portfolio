@@ -408,6 +408,28 @@ export const publicAPI = {
   },
 
   /**
+   * Get awards
+   */
+  getAwards: async () => {
+    return apiClient.get('', {
+      params: {
+        action: API_ACTIONS.GET_AWARDS,
+      },
+    });
+  },
+
+  /**
+   * Get publications
+   */
+  getPublications: async () => {
+    return apiClient.get('', {
+      params: {
+        action: API_ACTIONS.GET_PUBLICATIONS,
+      },
+    });
+  },
+
+  /**
    * Get tags
    */
   getTags: async () => {
@@ -945,6 +967,206 @@ export const adminAPI = {
       return response;
     } catch (error) {
       console.error('Delete category error:', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Get awards (admin can see all, including inactive)
+   */
+  getAwards: async () => {
+    try {
+      const token = tokenStorage.get();
+      return apiClient.get('', {
+        params: {
+          action: API_ACTIONS.GET_AWARDS,
+          token: token || '',
+        },
+      });
+    } catch (error) {
+      console.error('Get awards error:', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Create award
+   */
+  createAward: async (awardData) => {
+    try {
+      const token = tokenStorage.get();
+      const params = new URLSearchParams();
+      params.append('action', API_ACTIONS.CREATE_AWARD);
+      params.append('token', token || '');
+      
+      Object.keys(awardData).forEach(key => {
+        const value = awardData[key];
+        if (value !== null && value !== undefined) {
+          params.append(key, String(value));
+        }
+      });
+      
+      const response = await apiClient.post('', params.toString(), {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+      });
+      return response;
+    } catch (error) {
+      console.error('Create award error:', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Update award
+   */
+  updateAward: async (id, awardData) => {
+    try {
+      const token = tokenStorage.get();
+      const params = new URLSearchParams();
+      params.append('action', API_ACTIONS.UPDATE_AWARD);
+      params.append('token', token || '');
+      params.append('id', id);
+      
+      Object.keys(awardData).forEach(key => {
+        const value = awardData[key];
+        if (value !== null && value !== undefined) {
+          params.append(key, String(value));
+        }
+      });
+      
+      const response = await apiClient.post('', params.toString(), {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+      });
+      return response;
+    } catch (error) {
+      console.error('Update award error:', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Delete award
+   */
+  deleteAward: async (id) => {
+    try {
+      const token = tokenStorage.get();
+      const params = new URLSearchParams();
+      params.append('action', API_ACTIONS.DELETE_AWARD);
+      params.append('id', id);
+      params.append('token', token || '');
+      
+      const response = await apiClient.post('', params.toString(), {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+      });
+      return response;
+    } catch (error) {
+      console.error('Delete award error:', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Get publications (admin can see all, including inactive)
+   */
+  getPublications: async () => {
+    try {
+      const token = tokenStorage.get();
+      return apiClient.get('', {
+        params: {
+          action: API_ACTIONS.GET_PUBLICATIONS,
+          token: token || '',
+        },
+      });
+    } catch (error) {
+      console.error('Get publications error:', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Create publication
+   */
+  createPublication: async (publicationData) => {
+    try {
+      const token = tokenStorage.get();
+      const params = new URLSearchParams();
+      params.append('action', API_ACTIONS.CREATE_PUBLICATION);
+      params.append('token', token || '');
+      
+      Object.keys(publicationData).forEach(key => {
+        const value = publicationData[key];
+        if (value !== null && value !== undefined) {
+          params.append(key, String(value));
+        }
+      });
+      
+      const response = await apiClient.post('', params.toString(), {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+      });
+      return response;
+    } catch (error) {
+      console.error('Create publication error:', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Update publication
+   */
+  updatePublication: async (id, publicationData) => {
+    try {
+      const token = tokenStorage.get();
+      const params = new URLSearchParams();
+      params.append('action', API_ACTIONS.UPDATE_PUBLICATION);
+      params.append('token', token || '');
+      params.append('id', id);
+      
+      Object.keys(publicationData).forEach(key => {
+        const value = publicationData[key];
+        if (value !== null && value !== undefined) {
+          params.append(key, String(value));
+        }
+      });
+      
+      const response = await apiClient.post('', params.toString(), {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+      });
+      return response;
+    } catch (error) {
+      console.error('Update publication error:', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Delete publication
+   */
+  deletePublication: async (id) => {
+    try {
+      const token = tokenStorage.get();
+      const params = new URLSearchParams();
+      params.append('action', API_ACTIONS.DELETE_PUBLICATION);
+      params.append('id', id);
+      params.append('token', token || '');
+      
+      const response = await apiClient.post('', params.toString(), {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+      });
+      return response;
+    } catch (error) {
+      console.error('Delete publication error:', error);
       throw error;
     }
   },

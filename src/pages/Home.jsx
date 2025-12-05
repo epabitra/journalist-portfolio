@@ -12,16 +12,17 @@ import { formatDate } from '@/utils/dateFormatter';
 import { ROUTES } from '@/config/constants';
 import Loading from '@/components/Loading';
 import { ENV } from '@/config/env';
-import { mockProfile, mockSocialLinks, mockStats, mockAwards, mockPublications } from '@/utils/mockData';
+// Stats are now loaded from profile data
 import { getSocialIconFromLink } from '@/utils/socialIcons';
 
 const Home = () => {
   const [profile, setProfile] = useState(null);
   const [posts, setPosts] = useState([]);
   const [socialLinks, setSocialLinks] = useState([]);
+  const [awards, setAwards] = useState([]);
+  const [publications, setPublications] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [useMockData, setUseMockData] = useState(false);
 
   useEffect(() => {
     loadData();
@@ -31,20 +32,20 @@ const Home = () => {
     try {
       setLoading(true);
       setError(null);
-      setUseMockData(false);
 
-      const [profileData, postsData, socialData] = await Promise.all([
+      const [profileData, postsData, socialData, awardsData, publicationsData] = await Promise.all([
         publicAPI.getProfile().catch(() => null),
         publicAPI.listPosts({ limit: 6, featured: 'true', status: 'published' }).catch(() => null),
         publicAPI.getSocialLinks().catch(() => null),
+        publicAPI.getAwards().catch(() => null),
+        publicAPI.getPublications().catch(() => null),
       ]);
 
-      // Use API data if available, otherwise use mock data
+      // Use API data only - no mock fallbacks for dynamic content
       if (profileData?.success && profileData.data) {
         setProfile(profileData.data);
       } else {
-        setProfile(mockProfile);
-        setUseMockData(true);
+        setProfile(null);
       }
 
       if (postsData?.success && postsData.data?.length > 0) {
@@ -56,16 +57,28 @@ const Home = () => {
       if (socialData?.success && socialData.data?.length > 0) {
         setSocialLinks(socialData.data);
       } else {
-        setSocialLinks(mockSocialLinks);
-        setUseMockData(true);
+        setSocialLinks([]);
+      }
+
+      if (awardsData?.success && awardsData.data?.length > 0) {
+        setAwards(awardsData.data);
+      } else {
+        setAwards([]);
+      }
+
+      if (publicationsData?.success && publicationsData.data?.length > 0) {
+        setPublications(publicationsData.data);
+      } else {
+        setPublications([]);
       }
     } catch (err) {
       console.error('Error loading home data:', err);
-      // Use mock data on error for profile and social links only
-      setProfile(mockProfile);
+      // Set to null/empty on error - no mock data fallbacks
+      setProfile(null);
       setPosts([]);
-      setSocialLinks(mockSocialLinks);
-      setUseMockData(true);
+      setSocialLinks([]);
+      setAwards([]);
+      setPublications([]);
     } finally {
       setLoading(false);
     }
@@ -75,42 +88,42 @@ const Home = () => {
     return <Loading fullScreen message="Loading..." />;
   }
 
-  const displayProfile = profile || mockProfile;
+  const displayProfile = profile;
   const displayPosts = posts;
-  const displaySocialLinks = socialLinks.length > 0 ? socialLinks : mockSocialLinks;
+  const displaySocialLinks = socialLinks;
 
   // Prepare schema data
   const personSchemaData = {
-    name: displayProfile.name || 'Sugyan Sagar',
+    name: displayProfile?.name || 'Sugyan Sagar',
     alternateName: ['Sugyansagar'],
     url: ENV.SITE_URL || 'https://synodofberhampur.com',
-    image: displayProfile.profile_image_url,
-    jobTitle: displayProfile.title || displayProfile.headline || 'Award-Winning Journalist',
-    description: displayProfile.short_bio || displayProfile.bio || 'Award-winning investigative journalist specializing in human rights, environmental issues, and political reporting.',
-    sameAs: displaySocialLinks
+    image: displayProfile?.profile_image_url,
+    jobTitle: displayProfile?.title || displayProfile?.headline || 'Award-Winning Journalist',
+    description: displayProfile?.short_bio || displayProfile?.bio || 'Award-winning investigative journalist specializing in human rights, environmental issues, and political reporting.',
+    sameAs: (displaySocialLinks || [])
       .filter(link => link.is_active !== false && link.url)
       .map(link => link.url),
-    email: displayProfile.email,
+    email: displayProfile?.email,
     knowsAbout: ['Journalism', 'Investigative Reporting', 'Human Rights', 'Environmental Issues', 'Politics'],
-    award: mockAwards.map(award => `${award.award} - ${award.organization} (${award.year})`),
+    award: (awards || []).map(award => `${award.award || award.award_name || ''} - ${award.organization || ''} (${award.year || ''})`).filter(a => a.trim() !== '- ()'),
   };
 
   const websiteSchemaData = {
-    name: displayProfile.name || 'Sugyan Sagar',
+    name: displayProfile?.name || 'Sugyan Sagar',
     alternateName: 'Sugyansagar',
     url: ENV.SITE_URL || 'https://synodofberhampur.com',
-    description: `${displayProfile.name || 'Sugyan Sagar'} - Award-winning investigative journalist. Explore stories, articles, and multimedia content.`,
+    description: `${displayProfile?.name || 'Sugyan Sagar'} - Award-winning investigative journalist. Explore stories, articles, and multimedia content.`,
   };
 
   return (
     <>
       <EnhancedHelmet
-        title={`${displayProfile.name || 'Sugyan Sagar'} - Award-Winning Journalist`}
-        description={displayProfile.short_bio || displayProfile.bio || `Sugyan Sagar is an award-winning investigative journalist specializing in human rights, environmental issues, and political reporting. Explore stories, articles, and multimedia content.`}
-        keywords={`Sugyan Sagar, Sugyansagar, ${displayProfile.name || 'Sugyan Sagar'} journalist, investigative reporter, journalism, news, articles, stories, human rights, environment, politics`}
-        image={displayProfile.profile_image_url}
+        title={`${displayProfile?.name || 'Sugyan Sagar'} - Award-Winning Journalist`}
+        description={displayProfile?.short_bio || displayProfile?.bio || `Sugyan Sagar is an award-winning investigative journalist specializing in human rights, environmental issues, and political reporting. Explore stories, articles, and multimedia content.`}
+        keywords={`Sugyan Sagar, Sugyansagar, ${displayProfile?.name || 'Sugyan Sagar'} journalist, investigative reporter, journalism, news, articles, stories, human rights, environment, politics`}
+        image={displayProfile?.profile_image_url}
         type="website"
-        author={displayProfile.name || 'Sugyan Sagar'}
+        author={displayProfile?.name || 'Sugyan Sagar'}
       />
       
       {/* Schema Markup */}
@@ -121,23 +134,27 @@ const Home = () => {
         {/* Hero Section */}
         <section className="hero-section">
           <div className="hero-content">
-            {displayProfile.profile_image_url && (
+            {displayProfile?.profile_image_url && (
               <div className="hero-image-wrapper">
                 <img
                   src={displayProfile.profile_image_url}
-                  alt={`${displayProfile.name || 'Sugyan Sagar'} - Award-winning investigative journalist`}
+                  alt={`${displayProfile?.name || 'Sugyan Sagar'} - Award-winning investigative journalist`}
                   className="hero-image"
                 />
               </div>
             )}
             <div className="hero-text">
-              <h1>{displayProfile.name}</h1>
-              <p className="headline">{displayProfile.title || displayProfile.headline}</p>
-              <p className="bio">
-                {displayProfile.short_bio || displayProfile.bio}
-              </p>
+              <h1>{displayProfile?.name || 'Sugyan Sagar'}</h1>
+              {(displayProfile?.title || displayProfile?.headline) && (
+                <p className="headline">{displayProfile.title || displayProfile.headline}</p>
+              )}
+              {(displayProfile?.short_bio || displayProfile?.bio) && (
+                <p className="bio">
+                  {displayProfile.short_bio || displayProfile.bio}
+                </p>
+              )}
               
-              {displaySocialLinks.length > 0 && (
+              {displaySocialLinks && displaySocialLinks.length > 0 && (
                 <div className="hero-social-links">
                   {displaySocialLinks
                     .filter(link => link.is_active !== false)
@@ -187,30 +204,38 @@ const Home = () => {
               gap: 'var(--space-8)',
               textAlign: 'center'
             }}>
-              <div className="stat-card">
-                <div style={{ fontSize: 'var(--text-5xl)', fontWeight: 'var(--font-bold)', color: 'var(--primary-600)', marginBottom: 'var(--space-2)' }}>
-                  {mockStats.totalStories}+
+              {displayProfile?.total_stories !== undefined && displayProfile?.total_stories !== null && (
+                <div className="stat-card">
+                  <div style={{ fontSize: 'var(--text-5xl)', fontWeight: 'var(--font-bold)', color: 'var(--primary-600)', marginBottom: 'var(--space-2)' }}>
+                    {displayProfile.total_stories}+
+                  </div>
+                  <div style={{ fontSize: 'var(--text-lg)', color: 'var(--text-secondary)' }}>Published Stories</div>
                 </div>
-                <div style={{ fontSize: 'var(--text-lg)', color: 'var(--text-secondary)' }}>Published Stories</div>
-              </div>
-              <div className="stat-card">
-                <div style={{ fontSize: 'var(--text-5xl)', fontWeight: 'var(--font-bold)', color: 'var(--primary-600)', marginBottom: 'var(--space-2)' }}>
-                  {mockStats.countriesCovered}+
+              )}
+              {displayProfile?.countries_covered !== undefined && displayProfile?.countries_covered !== null && (
+                <div className="stat-card">
+                  <div style={{ fontSize: 'var(--text-5xl)', fontWeight: 'var(--font-bold)', color: 'var(--primary-600)', marginBottom: 'var(--space-2)' }}>
+                    {displayProfile.countries_covered}+
+                  </div>
+                  <div style={{ fontSize: 'var(--text-lg)', color: 'var(--text-secondary)' }}>Countries Covered</div>
                 </div>
-                <div style={{ fontSize: 'var(--text-lg)', color: 'var(--text-secondary)' }}>Countries Covered</div>
-              </div>
-              <div className="stat-card">
-                <div style={{ fontSize: 'var(--text-5xl)', fontWeight: 'var(--font-bold)', color: 'var(--primary-600)', marginBottom: 'var(--space-2)' }}>
-                  {mockStats.awards}+
+              )}
+              {displayProfile?.awards_count !== undefined && displayProfile?.awards_count !== null && (
+                <div className="stat-card">
+                  <div style={{ fontSize: 'var(--text-5xl)', fontWeight: 'var(--font-bold)', color: 'var(--primary-600)', marginBottom: 'var(--space-2)' }}>
+                    {displayProfile.awards_count}+
+                  </div>
+                  <div style={{ fontSize: 'var(--text-lg)', color: 'var(--text-secondary)' }}>Awards & Recognition</div>
                 </div>
-                <div style={{ fontSize: 'var(--text-lg)', color: 'var(--text-secondary)' }}>Awards & Recognition</div>
-              </div>
-              <div className="stat-card">
-                <div style={{ fontSize: 'var(--text-5xl)', fontWeight: 'var(--font-bold)', color: 'var(--primary-600)', marginBottom: 'var(--space-2)' }}>
-                  {mockStats.yearsExperience}+
+              )}
+              {displayProfile?.years_experience !== undefined && displayProfile?.years_experience !== null && (
+                <div className="stat-card">
+                  <div style={{ fontSize: 'var(--text-5xl)', fontWeight: 'var(--font-bold)', color: 'var(--primary-600)', marginBottom: 'var(--space-2)' }}>
+                    {displayProfile.years_experience}+
+                  </div>
+                  <div style={{ fontSize: 'var(--text-lg)', color: 'var(--text-secondary)' }}>Years Experience</div>
                 </div>
-                <div style={{ fontSize: 'var(--text-lg)', color: 'var(--text-secondary)' }}>Years Experience</div>
-              </div>
+              )}
             </div>
           </div>
         </section>
@@ -300,76 +325,95 @@ const Home = () => {
         )}
 
         {/* Awards Section */}
-        <section className="section" style={{ background: 'var(--bg-secondary)' }}>
-          <div className="container">
-            <div className="section-header text-center" style={{ marginBottom: 'var(--space-12)' }}>
-              <h2>Awards & Recognition</h2>
-              <p style={{ color: 'var(--text-secondary)', marginTop: 'var(--space-4)' }}>
-                Recognized for excellence in investigative journalism
-              </p>
+        {awards && awards.length > 0 && (
+          <section className="section" style={{ background: 'var(--bg-secondary)' }}>
+            <div className="container">
+              <div className="section-header text-center" style={{ marginBottom: 'var(--space-12)' }}>
+                <h2>Awards & Recognition</h2>
+                <p style={{ color: 'var(--text-secondary)', marginTop: 'var(--space-4)' }}>
+                  Recognized for excellence in investigative journalism
+                </p>
+              </div>
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+                gap: 'var(--space-6)'
+              }}>
+                {awards.slice(0, 4).map((award, index) => (
+                  <div key={award.id || index} className="card" style={{ 
+                    textAlign: 'center', 
+                    padding: 'var(--space-6)',
+                    animation: `fadeIn 0.6s ease-out ${index * 0.15}s both`
+                  }}>
+                    <div style={{ fontSize: 'var(--text-4xl)', marginBottom: 'var(--space-4)' }}>🏆</div>
+                    <div style={{ fontSize: 'var(--text-xl)', fontWeight: 'var(--font-bold)', marginBottom: 'var(--space-2)' }}>
+                      {award.award || award.award_name || 'Award'}
+                    </div>
+                    {award.organization && (
+                      <div style={{ color: 'var(--text-secondary)', marginBottom: 'var(--space-2)' }}>
+                        {award.organization}
+                      </div>
+                    )}
+                    {award.year && (
+                      <div style={{ color: 'var(--primary-600)', fontWeight: 'var(--font-semibold)' }}>
+                        {award.year}
+                      </div>
+                    )}
+                    {award.description && (
+                      <div style={{ color: 'var(--text-tertiary)', fontSize: 'var(--text-sm)', marginTop: 'var(--space-2)' }}>
+                        {award.description}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
             </div>
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-              gap: 'var(--space-6)'
-            }}>
-              {mockAwards.slice(0, 4).map((award, index) => (
-                <div key={index} className="card" style={{ 
-                  textAlign: 'center', 
-                  padding: 'var(--space-6)',
-                  animation: `fadeIn 0.6s ease-out ${index * 0.15}s both`
-                }}>
-                  <div style={{ fontSize: 'var(--text-4xl)', marginBottom: 'var(--space-4)' }}>🏆</div>
-                  <div style={{ fontSize: 'var(--text-xl)', fontWeight: 'var(--font-bold)', marginBottom: 'var(--space-2)' }}>
-                    {award.award}
-                  </div>
-                  <div style={{ color: 'var(--text-secondary)', marginBottom: 'var(--space-2)' }}>
-                    {award.organization}
-                  </div>
-                  <div style={{ color: 'var(--primary-600)', fontWeight: 'var(--font-semibold)' }}>
-                    {award.year}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
+          </section>
+        )}
 
         {/* Publications Section */}
-        <section className="section">
-          <div className="container">
-            <div className="section-header text-center" style={{ marginBottom: 'var(--space-12)' }}>
-              <h2>Featured Publications</h2>
-              <p style={{ color: 'var(--text-secondary)', marginTop: 'var(--space-4)' }}>
-                My work has been featured in leading publications worldwide
-              </p>
-            </div>
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-              gap: 'var(--space-6)',
-              alignItems: 'center'
-            }}>
-              {mockPublications.map((pub, index) => (
-                <div key={index} className="card" style={{ 
-                  textAlign: 'center', 
-                  padding: 'var(--space-6)',
-                  background: 'var(--bg-primary)',
-                  border: '1px solid var(--border-light)',
-                  animation: `fadeIn 0.6s ease-out ${index * 0.1}s both`
-                }}>
-                  <div style={{ fontSize: 'var(--text-4xl)', marginBottom: 'var(--space-3)' }}>{pub.logo}</div>
-                  <div style={{ fontSize: 'var(--text-lg)', fontWeight: 'var(--font-semibold)', marginBottom: 'var(--space-2)' }}>
-                    {pub.name}
+        {publications && publications.length > 0 && (
+          <section className="section">
+            <div className="container">
+              <div className="section-header text-center" style={{ marginBottom: 'var(--space-12)' }}>
+                <h2>Featured Publications</h2>
+                <p style={{ color: 'var(--text-secondary)', marginTop: 'var(--space-4)' }}>
+                  My work has been featured in leading publications worldwide
+                </p>
+              </div>
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                gap: 'var(--space-6)',
+                alignItems: 'center'
+              }}>
+                {publications.map((pub, index) => (
+                  <div key={pub.id || index} className="card" style={{ 
+                    textAlign: 'center', 
+                    padding: 'var(--space-6)',
+                    background: 'var(--bg-primary)',
+                    border: '1px solid var(--border-light)',
+                    animation: `fadeIn 0.6s ease-out ${index * 0.1}s both`
+                  }}>
+                    {pub.logo && (
+                      <div style={{ fontSize: 'var(--text-4xl)', marginBottom: 'var(--space-3)' }}>
+                        {pub.logo}
+                      </div>
+                    )}
+                    <div style={{ fontSize: 'var(--text-lg)', fontWeight: 'var(--font-semibold)', marginBottom: 'var(--space-2)' }}>
+                      {pub.name || 'Publication'}
+                    </div>
+                    {pub.articles !== undefined && pub.articles !== null && (
+                      <div style={{ color: 'var(--text-secondary)', fontSize: 'var(--text-sm)' }}>
+                        {pub.articles} {pub.articles === 1 ? 'article' : 'articles'}
+                      </div>
+                    )}
                   </div>
-                  <div style={{ color: 'var(--text-secondary)', fontSize: 'var(--text-sm)' }}>
-                    {pub.articles} articles
-                  </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
-          </div>
-        </section>
+          </section>
+        )}
 
         {/* Call to Action Section */}
         <section className="section" style={{ background: 'linear-gradient(135deg, var(--primary-600) 0%, var(--primary-800) 100%)', color: 'white' }}>

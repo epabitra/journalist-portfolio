@@ -53,6 +53,10 @@ const ProfileEditor = () => {
       experience: '',
       specializations: '',
       languages: '',
+      total_stories: '',
+      countries_covered: '',
+      awards_count: '',
+      years_experience: '',
     },
   });
 
@@ -96,6 +100,10 @@ const ProfileEditor = () => {
           experience: profile.experience || '',
           specializations: profile.specializations || '',
           languages: profile.languages || '',
+          total_stories: profile.total_stories || '',
+          countries_covered: profile.countries_covered || '',
+          awards_count: profile.awards_count || '',
+          years_experience: profile.years_experience || '',
         });
         if (profile.profile_image_url) {
           setProfileImagePreview(profile.profile_image_url);
@@ -611,6 +619,79 @@ const ProfileEditor = () => {
               </div>
             </div>
           </div>
+
+          {/* Career Highlights / Stats */}
+          {activeTab === 'profile' && (
+            <div className="admin-card">
+              <div className="card-header">
+                <h2>Career Highlights</h2>
+                <p style={{ fontSize: 'var(--text-sm)', color: 'var(--text-secondary)', marginTop: 'var(--space-2)' }}>
+                  These numbers will be displayed on your homepage and about page
+                </p>
+              </div>
+              <div className="card-body">
+                <div className="form-row">
+                  <div className="form-group">
+                    <label htmlFor="total_stories">Published Stories</label>
+                    <input
+                      type="number"
+                      id="total_stories"
+                      {...register('total_stories', { valueAsNumber: true, min: 0 })}
+                      min="0"
+                      placeholder="e.g., 58"
+                    />
+                    <p style={{ fontSize: 'var(--text-sm)', color: 'var(--text-secondary)', marginTop: 'var(--space-2)' }}>
+                      Total number of published stories/articles
+                    </p>
+                  </div>
+
+                  <div className="form-group">
+                    <label htmlFor="countries_covered">Countries Covered</label>
+                    <input
+                      type="number"
+                      id="countries_covered"
+                      {...register('countries_covered', { valueAsNumber: true, min: 0 })}
+                      min="0"
+                      placeholder="e.g., 42"
+                    />
+                    <p style={{ fontSize: 'var(--text-sm)', color: 'var(--text-secondary)', marginTop: 'var(--space-2)' }}>
+                      Number of countries you've reported from
+                    </p>
+                  </div>
+                </div>
+
+                <div className="form-row">
+                  <div className="form-group">
+                    <label htmlFor="awards_count">Awards Won</label>
+                    <input
+                      type="number"
+                      id="awards_count"
+                      {...register('awards_count', { valueAsNumber: true, min: 0 })}
+                      min="0"
+                      placeholder="e.g., 12"
+                    />
+                    <p style={{ fontSize: 'var(--text-sm)', color: 'var(--text-secondary)', marginTop: 'var(--space-2)' }}>
+                      Total number of awards and recognitions
+                    </p>
+                  </div>
+
+                  <div className="form-group">
+                    <label htmlFor="years_experience">Years Experience</label>
+                    <input
+                      type="number"
+                      id="years_experience"
+                      {...register('years_experience', { valueAsNumber: true, min: 0 })}
+                      min="0"
+                      placeholder="e.g., 15"
+                    />
+                    <p style={{ fontSize: 'var(--text-sm)', color: 'var(--text-secondary)', marginTop: 'var(--space-2)' }}>
+                      Years of professional experience
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
 
               {/* Form Actions */}
               <div className="form-actions">
