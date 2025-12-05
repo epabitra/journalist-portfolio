@@ -3,6 +3,6 @@ Allow: /
 Disallow: /admin/
 Disallow: /api/
 
-Sitemap: https://synodofberhampur.com/sitemap.xml
+Sitemap: https://sugyansagar.com/sitemap.xml
 
 

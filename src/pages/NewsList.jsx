@@ -120,7 +120,7 @@ const NewsList = () => {
         description="Stay updated with the latest news, breaking stories, and updates by Sugyan Sagar. Real-time coverage of important events, political developments, and current affairs."
         keywords="Sugyan Sagar news, Sugyansagar updates, breaking news, latest news, current affairs, news updates, journalism news"
         type="website"
-        canonicalUrl={`${ENV.SITE_URL || 'https://synodofberhampur.com'}/news`}
+        canonicalUrl={`${ENV.SITE_URL || 'https://sugyansagar.com'}/news`}
       />
 
       <div className="blog-list-page">

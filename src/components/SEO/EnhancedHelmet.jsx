@@ -20,7 +20,7 @@ const EnhancedHelmet = ({
   noindex = false,
 }) => {
   const location = useLocation();
-  const siteUrl = ENV.SITE_URL || 'https://synodofberhampur.com';
+  const siteUrl = ENV.SITE_URL || 'https://sugyansagar.com';
   const currentUrl = canonicalUrl || `${siteUrl}${location.pathname}`;
   const fullTitle = title ? `${title} | ${ENV.SITE_NAME}` : `${ENV.SITE_NAME} - Sugyan Sagar`;
   

@@ -6,7 +6,7 @@
   
   <!-- Home Page -->
   <url>
-    <loc>https://synodofberhampur.com/</loc>
+    <loc>https://sugyansagar.com/</loc>
     <lastmod>2024-01-15</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
@@ -14,7 +14,7 @@
   
   <!-- About Page -->
   <url>
-    <loc>https://synodofberhampur.com/about</loc>
+    <loc>https://sugyansagar.com/about</loc>
     <lastmod>2024-01-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
@@ -22,7 +22,7 @@
   
   <!-- Blog List -->
   <url>
-    <loc>https://synodofberhampur.com/blog</loc>
+    <loc>https://sugyansagar.com/blog</loc>
     <lastmod>2024-01-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -30,7 +30,7 @@
   
   <!-- Portfolio -->
   <url>
-    <loc>https://synodofberhampur.com/portfolio</loc>
+    <loc>https://sugyansagar.com/portfolio</loc>
     <lastmod>2024-01-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
@@ -38,7 +38,7 @@
   
   <!-- Contact -->
   <url>
-    <loc>https://synodofberhampur.com/contact</loc>
+    <loc>https://sugyansagar.com/contact</loc>
     <lastmod>2024-01-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
@@ -47,7 +47,7 @@
   <!-- Add individual blog posts here as you publish them -->
   <!-- Example:
   <url>
-    <loc>https://synodofberhampur.com/blog/post-slug</loc>
+    <loc>https://sugyansagar.com/blog/post-slug</loc>
     <lastmod>2024-01-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>

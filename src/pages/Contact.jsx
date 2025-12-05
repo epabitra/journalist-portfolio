@@ -79,7 +79,7 @@ const Contact = () => {
         description="Contact Sugyan Sagar for media inquiries, collaborations, story ideas, or speaking engagements. Award-winning investigative journalist available for interviews and consultations."
         keywords="Contact Sugyan Sagar, Sugyansagar contact, journalist contact, media inquiries, collaboration, story ideas"
         type="website"
-        canonicalUrl={`${ENV.SITE_URL || 'https://synodofberhampur.com'}/contact`}
+        canonicalUrl={`${ENV.SITE_URL || 'https://sugyansagar.com'}/contact`}
       />
 
       <div className="contact-page">

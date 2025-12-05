@@ -96,7 +96,7 @@ const Home = () => {
   const personSchemaData = {
     name: displayProfile?.name || 'Sugyan Sagar',
     alternateName: ['Sugyansagar'],
-    url: ENV.SITE_URL || 'https://synodofberhampur.com',
+    url: ENV.SITE_URL || 'https://sugyansagar.com',
     image: displayProfile?.profile_image_url,
     jobTitle: displayProfile?.title || displayProfile?.headline || 'Award-Winning Journalist',
     description: displayProfile?.short_bio || displayProfile?.bio || 'Award-winning investigative journalist specializing in human rights, environmental issues, and political reporting.',
@@ -111,7 +111,7 @@ const Home = () => {
   const websiteSchemaData = {
     name: displayProfile?.name || 'Sugyan Sagar',
     alternateName: 'Sugyansagar',
-    url: ENV.SITE_URL || 'https://synodofberhampur.com',
+    url: ENV.SITE_URL || 'https://sugyansagar.com',
     description: `${displayProfile?.name || 'Sugyan Sagar'} - Award-winning investigative journalist. Explore stories, articles, and multimedia content.`,
   };
 

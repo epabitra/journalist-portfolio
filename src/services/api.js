@@ -560,7 +560,7 @@ export const adminAPI = {
           console.error('3. Make sure "Who has access" is set to "Anyone" (NOT "Only myself")');
           console.error('4. Click "Deploy" to save');
           console.error('5. In Script Properties, set ALLOWED_ORIGINS to:');
-          console.error('   http://localhost:3000,http://localhost:5173,https://epabitra3.github.io');
+          console.error('   http://localhost:3000,http://localhost:5173,https://sugyansagar.com');
           console.error('6. Redeploy the Web App');
           console.error('7. Clear browser cache and try again');
         } else {

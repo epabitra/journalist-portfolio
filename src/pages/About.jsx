@@ -88,7 +88,7 @@ const About = () => {
   const personSchemaData = displayProfile ? {
     name: displayProfile.name || 'Sugyan Sagar',
     alternateName: ['Sugyansagar'],
-    url: `${ENV.SITE_URL || 'https://synodofberhampur.com'}/about`,
+    url: `${ENV.SITE_URL || 'https://sugyansagar.com'}/about`,
     image: displayProfile.profile_image_url,
     jobTitle: displayProfile.title || displayProfile.headline || 'Award-Winning Journalist',
     description: displayProfile.short_bio || displayProfile.bio || 'Award-winning investigative journalist specializing in human rights, environmental issues, and political reporting.',
@@ -113,7 +113,7 @@ const About = () => {
         image={displayProfile?.profile_image_url}
         type="profile"
         author={displayProfile?.name || 'Sugyan Sagar'}
-        canonicalUrl={`${ENV.SITE_URL || 'https://synodofberhampur.com'}/about`}
+        canonicalUrl={`${ENV.SITE_URL || 'https://sugyansagar.com'}/about`}
       />
       
       {/* Schema Markup */}

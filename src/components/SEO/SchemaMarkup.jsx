@@ -14,7 +14,7 @@ const SchemaMarkup = ({ type, data }) => {
           '@type': 'Person',
           name: data.name || 'Sugyan Sagar',
           alternateName: data.alternateName || ['Sugyansagar', 'S. Sagar'],
-          url: data.url || 'https://synodofberhampur.com',
+          url: data.url || 'https://sugyansagar.com',
           image: data.image,
           jobTitle: data.jobTitle || 'Award-Winning Journalist',
           worksFor: data.worksFor || {
@@ -35,7 +35,7 @@ const SchemaMarkup = ({ type, data }) => {
           '@type': 'WebSite',
           name: data.name || 'Sugyan Sagar',
           alternateName: data.alternateName || 'Sugyansagar',
-          url: data.url || 'https://synodofberhampur.com',
+          url: data.url || 'https://sugyansagar.com',
           description: data.description || 'Official website of award-winning journalist Sugyan Sagar',
           author: {
             '@type': 'Person',
@@ -45,7 +45,7 @@ const SchemaMarkup = ({ type, data }) => {
             '@type': 'SearchAction',
             target: {
               '@type': 'EntryPoint',
-              urlTemplate: 'https://synodofberhampur.com/blog?search={search_term_string}',
+              urlTemplate: 'https://sugyansagar.com/blog?search={search_term_string}',
             },
             'query-input': 'required name=search_term_string',
           },
@@ -62,14 +62,14 @@ const SchemaMarkup = ({ type, data }) => {
           author: {
             '@type': 'Person',
             name: data.authorName || 'Sugyan Sagar',
-            url: data.authorUrl || 'https://synodofberhampur.com/about',
+            url: data.authorUrl || 'https://sugyansagar.com/about',
           },
           publisher: {
             '@type': 'Person',
             name: 'Sugyan Sagar',
             logo: {
               '@type': 'ImageObject',
-              url: data.publisherLogo || 'https://synodofberhampur.com/logo.jpg',
+              url: data.publisherLogo || 'https://sugyansagar.com/logo.jpg',
             },
           },
           datePublished: data.datePublished,

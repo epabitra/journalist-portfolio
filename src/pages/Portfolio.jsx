@@ -76,7 +76,7 @@ const Portfolio = () => {
         description="Explore the portfolio of award-winning journalist Sugyan Sagar. Featured investigative stories, reports, and multimedia content covering human rights, environment, and politics."
         keywords="Sugyan Sagar portfolio, Sugyansagar work, journalist portfolio, featured stories, investigative journalism portfolio, award-winning journalism"
         type="website"
-        canonicalUrl={`${ENV.SITE_URL || 'https://synodofberhampur.com'}/portfolio`}
+        canonicalUrl={`${ENV.SITE_URL || 'https://sugyansagar.com'}/portfolio`}
       />
 
       <div className="portfolio-page">

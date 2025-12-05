@@ -108,13 +108,13 @@ const BlogDetail = () => {
     : Array.isArray(post.tags) ? post.tags : [];
 
   // Prepare schema data
-  const articleUrl = `${ENV.SITE_URL || 'https://synodofberhampur.com'}${APP_ROUTES.BLOG}/${post.slug}`;
+  const articleUrl = `${ENV.SITE_URL || 'https://sugyansagar.com'}${APP_ROUTES.BLOG}/${post.slug}`;
   const articleSchemaData = {
     headline: post.seo_title || post.title,
     description: post.seo_description || post.excerpt || post.title,
     image: post.cover_image_url || post.media_url,
     authorName: post.author_name || 'Sugyan Sagar',
-    authorUrl: `${ENV.SITE_URL || 'https://synodofberhampur.com'}/about`,
+    authorUrl: `${ENV.SITE_URL || 'https://sugyansagar.com'}/about`,
     url: articleUrl,
     datePublished: post.published_at,
     dateModified: post.updated_at || post.published_at,
@@ -125,8 +125,8 @@ const BlogDetail = () => {
   // Breadcrumb schema
   const breadcrumbData = {
     items: [
-      { name: 'Home', url: ENV.SITE_URL || 'https://synodofberhampur.com' },
-      { name: 'Blog', url: `${ENV.SITE_URL || 'https://synodofberhampur.com'}${APP_ROUTES.BLOG}` },
+      { name: 'Home', url: ENV.SITE_URL || 'https://sugyansagar.com' },
+      { name: 'Blog', url: `${ENV.SITE_URL || 'https://sugyansagar.com'}${APP_ROUTES.BLOG}` },
       { name: post.title, url: articleUrl },
     ],
   };
