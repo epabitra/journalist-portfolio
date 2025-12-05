@@ -61,13 +61,8 @@ Thumbs.db
 *.swo
 *~
 
-# Documentation and Setup Files (exclude setup guides, keep README and deployment guide)
-FIREBASE_SETUP.md
-SETUP_GUIDE.md
-*_SETUP.md
-*_GUIDE.md
-!README.md
-!GITHUB_DEPLOYMENT.md
+# Documentation and Setup Files - exclude all markdown files for security
+*.md
 
 # Setup and Helper Scripts
 GOOGLE_APPS_SCRIPT_CORS_FIX.js
