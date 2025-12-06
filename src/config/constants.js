@@ -92,6 +92,7 @@ export const POST_STATUS = {
 export const POST_TYPE = {
   BLOG: 'blog',
   NEWS: 'news',
+  BOTH: 'both',
 };
 
 export const MEDIA_TYPE = {

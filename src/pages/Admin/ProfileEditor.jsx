@@ -1086,12 +1086,19 @@ const SocialLinkForm = ({ link, onSubmit, onCancel }) => {
       </div>
 
       <div className="form-group">
-        <label className="checkbox-label">
+        <label className="checkbox-label" style={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          gap: 'var(--space-2)', 
+          cursor: 'pointer',
+          whiteSpace: 'nowrap'
+        }}>
           <input
             type="checkbox"
             {...register('is_active')}
+            style={{ margin: 0, width: 'auto', cursor: 'pointer' }}
           />
-          <span>Active (show this link on the website)</span>
+          <span style={{ whiteSpace: 'nowrap' }}>Active (show this link on the website)</span>
         </label>
       </div>
 

@@ -13,6 +13,7 @@ import { publicAPI } from '@/services/api';
 import { formatDate, formatDateTime } from '@/utils/dateFormatter';
 import { sanitizeHtml } from '@/utils/sanitize';
 import Loading from '@/components/Loading';
+import MediaCarousel from '@/components/ImageCarousel/MediaCarousel';
 import { ENV } from '@/config/env';
 import { ROUTES as APP_ROUTES, MEDIA_TYPE } from '@/config/constants';
 
@@ -178,39 +179,58 @@ const BlogDetail = () => {
             </div>
           </header>
 
-          {/* Media (Video or Image) - Show chosen media instead of cover image */}
-          {post.media_type && 
-           post.media_type !== MEDIA_TYPE.NONE && 
-           post.media_type !== 'none' && 
-           post.media_url && (
-            <div className={`post-media ${post.media_type === MEDIA_TYPE.VIDEO || post.media_type === 'video' ? 'post-media-video' : 'post-media-image'}`}>
-              {post.media_type === MEDIA_TYPE.VIDEO || post.media_type === 'video' ? (
-                <div className="video-wrapper">
-                  <ReactPlayer
-                    url={post.media_url}
-                    controls
-                    width="100%"
-                    height="100%"
-                    config={{
-                      youtube: {
-                        playerVars: {
-                          showinfo: 1,
-                          rel: 0,
-                          modestbranding: 1,
-                        },
-                      },
-                    }}
+          {/* Media Carousel (Videos or Images) */}
+          {(() => {
+            let mediaUrls = [];
+            const mediaType = post.media_type;
+            
+            // Check for media_urls (new format - array)
+            // Google Apps Script should already parse it to array, but handle both cases
+            if (post.media_urls) {
+              if (Array.isArray(post.media_urls)) {
+                mediaUrls = post.media_urls.filter(url => url && url.trim() !== '');
+              } else if (typeof post.media_urls === 'string' && post.media_urls.trim() !== '') {
+                try {
+                  // Try to parse as JSON
+                  const parsed = JSON.parse(post.media_urls);
+                  if (Array.isArray(parsed)) {
+                    mediaUrls = parsed.filter(url => url && url.trim() !== '');
+                  } else {
+                    // Single value, wrap in array
+                    mediaUrls = [parsed].filter(url => url && url.trim() !== '');
+                  }
+                } catch (e) {
+                  // If parsing fails, treat as single URL
+                  mediaUrls = [post.media_urls].filter(url => url && url.trim() !== '');
+                }
+              }
+            }
+            
+            // Backward compatibility: if media_url exists (old format) and no media_urls, use it
+            if (mediaUrls.length === 0 && post.media_url) {
+              mediaUrls = [post.media_url];
+            }
+            
+            // Only show carousel if we have media URLs and media type is set
+            if (mediaUrls.length > 0 && mediaType && mediaType !== MEDIA_TYPE.NONE && mediaType !== 'none') {
+              const isVideo = mediaType === MEDIA_TYPE.VIDEO || mediaType === 'video';
+              const items = mediaUrls.map(url => ({
+                url: String(url).trim(),
+                type: isVideo ? 'video' : 'image',
+                isYouTube: isVideo && (String(url).includes('youtube.com/embed') || String(url).includes('youtu.be') || String(url).includes('youtube.com/watch'))
+              })).filter(item => item.url !== '');
+              
+              if (items.length > 0) {
+                return (
+                  <MediaCarousel 
+                    items={items}
+                    alt={`${post.title} - Media`}
                   />
-                </div>
-              ) : post.media_type === MEDIA_TYPE.IMAGE || post.media_type === 'image' ? (
-                <img 
-                  src={post.media_url} 
-                  alt={`${post.title} - By Sugyan Sagar`} 
-                  loading="eager"
-                />
-              ) : null}
-            </div>
-          )}
+                );
+              }
+            }
+            return null;
+          })()}
 
           {/* Content */}
           <div className="post-content">
