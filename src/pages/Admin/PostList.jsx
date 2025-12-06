@@ -1,10 +1,10 @@
 /**
  * Admin Post List
- * Manage all posts (view, edit, delete) with bulk operations and server-side pagination
+ * Manage all posts (view, edit, delete) with pagination and bulk delete
  */
 
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { adminAPI } from '@/services/api';
 import { ROUTES, POST_STATUS, PAGINATION } from '@/config/constants';
 import { formatDate } from '@/utils/dateFormatter';
@@ -13,6 +13,7 @@ import Loading from '@/components/Loading';
 import { Helmet } from 'react-helmet-async';
 
 const AdminPostList = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -20,69 +21,105 @@ const AdminPostList = () => {
   const [deletingPostId, setDeletingPostId] = useState(null);
   const [selectedPosts, setSelectedPosts] = useState(new Set());
   const [bulkDeleting, setBulkDeleting] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize] = useState(10); // Posts per page
   const [pagination, setPagination] = useState({
-    total: 0,
     page: 1,
-    limit: 10,
+    total: 0,
+    limit: PAGINATION.DEFAULT_PAGE_SIZE,
+    totalPages: 0,
   });
+
+  const currentPage = parseInt(searchParams.get('page') || '1', 10);
+
+  useEffect(() => {
+    // Update filter from URL if present
+    const urlFilter = searchParams.get('filter') || 'all';
+    setFilter(urlFilter);
+  }, [searchParams]);
 
   useEffect(() => {
     loadPosts();
   }, [filter, currentPage]);
 
-  // Reset selection and page when filter changes
-  useEffect(() => {
-    setSelectedPosts(new Set());
-    if (filter !== 'all') {
-      setCurrentPage(1);
-    }
-  }, [filter]);
-
   const loadPosts = async () => {
     try {
       setLoading(true);
       setError(null);
+      setSelectedPosts(new Set()); // Clear selections when loading new page
 
       const params = {
         page: currentPage,
-        limit: pageSize,
+        limit: pagination.limit,
       };
       
       if (filter !== 'all') {
         params.status = filter;
       }
 
-      const postsData = await adminAPI.listPosts(params);
+      const response = await adminAPI.listPosts(params);
+      
+      // Handle different response structures
+      let postsData = response;
+      if (response && typeof response === 'object' && 'data' in response && 'status' in response) {
+        postsData = response.data;
+      }
 
-      if (postsData.success) {
-        setPosts(postsData.data || []);
+      if (postsData && postsData.success) {
+        const postsList = postsData.data || [];
+        const total = postsData.total || 0;
+        const totalPages = Math.ceil(total / pagination.limit);
+        
+        setPosts(postsList);
         setPagination({
-          total: postsData.total || 0,
-          page: postsData.page || currentPage,
-          limit: postsData.limit || pageSize,
+          ...pagination,
+          page: currentPage,
+          total,
+          totalPages,
         });
       } else {
         setPosts([]);
         setPagination({
-          total: 0,
+          ...pagination,
           page: currentPage,
-          limit: pageSize,
+          total: 0,
+          totalPages: 0,
         });
       }
     } catch (err) {
       console.error('Error loading posts:', err);
       setError(err.message || 'Failed to load posts');
       setPosts([]);
-      setPagination({
-        total: 0,
-        page: currentPage,
-        limit: pageSize,
-      });
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleFilterChange = (newFilter) => {
+    setFilter(newFilter);
+    setSearchParams({ filter: newFilter, page: '1' });
+  };
+
+  const handlePageChange = (newPage) => {
+    setSearchParams({ filter, page: String(newPage) });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleSelectAll = (e) => {
+    if (e.target.checked) {
+      const allIds = new Set(posts.map(post => post.id));
+      setSelectedPosts(allIds);
+    } else {
+      setSelectedPosts(new Set());
+    }
+  };
+
+  const handleSelectPost = (postId) => {
+    const newSelected = new Set(selectedPosts);
+    if (newSelected.has(postId)) {
+      newSelected.delete(postId);
+    } else {
+      newSelected.add(postId);
+    }
+    setSelectedPosts(newSelected);
   };
 
   const handleDelete = async (id, title) => {
@@ -92,60 +129,27 @@ const AdminPostList = () => {
 
     try {
       setDeletingPostId(id);
+      
       const result = await adminAPI.deletePost(id);
-      if (result.success) {
+      
+      let resultData = result;
+      if (result && typeof result === 'object' && 'data' in result && 'status' in result) {
+        resultData = result.data;
+      }
+      
+      if (resultData && resultData.success) {
+        // Reload posts - this will show loading state
+        await loadPosts();
+        // Clear deletion state only after reload completes
+        setDeletingPostId(null);
         toast.success('Post deleted successfully');
-        setSelectedPosts(prev => {
-          const newSet = new Set(prev);
-          newSet.delete(id);
-          return newSet;
-        });
-        
-        // Reload posts - if current page becomes empty, go to previous page
-        const newTotal = pagination.total - 1;
-        const newTotalPages = Math.ceil(newTotal / pageSize);
-        if (currentPage > newTotalPages && newTotalPages > 0) {
-          setCurrentPage(newTotalPages);
-        } else {
-          loadPosts();
-        }
       } else {
-        toast.error(result.message || 'Failed to delete post');
+        setDeletingPostId(null);
+        toast.error(resultData?.message || 'Failed to delete post');
       }
     } catch (err) {
-      toast.error(err.message || 'Failed to delete post');
-    } finally {
       setDeletingPostId(null);
-    }
-  };
-
-  const handleSelectPost = (postId) => {
-    setSelectedPosts(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(postId)) {
-        newSet.delete(postId);
-      } else {
-        newSet.add(postId);
-      }
-      return newSet;
-    });
-  };
-
-  const handleSelectAll = () => {
-    if (selectedPosts.size === posts.length && posts.every(post => selectedPosts.has(post.id))) {
-      // Deselect all on current page
-      setSelectedPosts(prev => {
-        const newSet = new Set(prev);
-        posts.forEach(post => newSet.delete(post.id));
-        return newSet;
-      });
-    } else {
-      // Select all on current page
-      setSelectedPosts(prev => {
-        const newSet = new Set(prev);
-        posts.forEach(post => newSet.add(post.id));
-        return newSet;
-      });
+      toast.error(err.message || 'Failed to delete post');
     }
   };
 
@@ -155,62 +159,48 @@ const AdminPostList = () => {
       return;
     }
 
-    const count = selectedPosts.size;
-    if (!window.confirm(`Are you sure you want to delete ${count} post${count > 1 ? 's' : ''}? This action cannot be undone.`)) {
+    const selectedArray = Array.from(selectedPosts);
+    const count = selectedArray.length;
+    
+    if (!window.confirm(`Are you sure you want to delete ${count} post(s)?`)) {
       return;
     }
 
     try {
       setBulkDeleting(true);
-      const deletePromises = Array.from(selectedPosts).map(id => 
-        adminAPI.deletePost(id).catch(err => {
-          console.error(`Failed to delete post ${id}:`, err);
-          return { success: false, id };
-        })
-      );
-
-      const results = await Promise.all(deletePromises);
-      const successCount = results.filter(r => r.success).length;
-      const failCount = count - successCount;
-
-      if (successCount > 0) {
-        toast.success(`Successfully deleted ${successCount} post${successCount > 1 ? 's' : ''}`);
-      }
-      if (failCount > 0) {
-        toast.error(`Failed to delete ${failCount} post${failCount > 1 ? 's' : ''}`);
-      }
-
-      setSelectedPosts(new Set());
       
-      // Reload posts - adjust page if current page becomes empty
-      const newTotal = pagination.total - successCount;
-      const newTotalPages = Math.ceil(newTotal / pageSize);
-      if (currentPage > newTotalPages && newTotalPages > 0) {
-        setCurrentPage(newTotalPages);
+      const result = await adminAPI.bulkDeletePosts(selectedArray);
+      
+      let resultData = result;
+      if (result && typeof result === 'object' && 'data' in result && 'status' in result) {
+        resultData = result.data;
+      }
+      
+      if (resultData && resultData.success) {
+        // Reload posts - this will show loading state
+        await loadPosts();
+        // Clear deletion state only after reload completes
+        setBulkDeleting(false);
+        setSelectedPosts(new Set());
+        toast.success(resultData.message || `${count} post(s) deleted successfully`);
       } else {
-        loadPosts();
+        setBulkDeleting(false);
+        toast.error(resultData?.message || 'Failed to delete posts');
       }
     } catch (err) {
-      toast.error('An error occurred during bulk delete');
-      console.error('Bulk delete error:', err);
-    } finally {
       setBulkDeleting(false);
+      toast.error(err.message || 'Failed to delete posts');
     }
   };
 
-  const handlePageChange = (newPage) => {
-    setCurrentPage(newPage);
-    setSelectedPosts(new Set()); // Clear selection when changing pages
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
+  const isAllSelected = posts.length > 0 && selectedPosts.size === posts.length;
+  const isSomeSelected = selectedPosts.size > 0 && selectedPosts.size < posts.length;
 
-  const totalPages = Math.ceil(pagination.total / pageSize);
-  const isAllSelected = posts.length > 0 && posts.every(post => selectedPosts.has(post.id));
-  const hasSelection = selectedPosts.size > 0;
-  const startIndex = (currentPage - 1) * pageSize;
-  const endIndex = Math.min(startIndex + posts.length, pagination.total);
+  // Show loading mask during deletion or when reloading after deletion
+  const isDeleting = deletingPostId || bulkDeleting;
+  const showDeletingMask = isDeleting;
 
-  if (loading) {
+  if (loading && posts.length === 0 && !isDeleting) {
     return <Loading fullScreen message="Loading posts..." />;
   }
 
@@ -220,8 +210,8 @@ const AdminPostList = () => {
         <title>Manage Posts | Admin</title>
       </Helmet>
 
-      {(deletingPostId || bulkDeleting) && (
-        <Loading fullScreen message={bulkDeleting ? `Deleting ${selectedPosts.size} posts...` : "Deleting post..."} />
+      {showDeletingMask && (
+        <Loading fullScreen message={bulkDeleting ? "Deleting posts..." : "Deleting post..."} />
       )}
 
       <div className="admin-page">
@@ -238,19 +228,19 @@ const AdminPostList = () => {
         {/* Filter Tabs */}
         <div className="filter-tabs">
           <button
-            onClick={() => setFilter('all')}
+            onClick={() => handleFilterChange('all')}
             className={`filter-tab ${filter === 'all' ? 'active' : ''}`}
           >
             All Posts
           </button>
           <button
-            onClick={() => setFilter(POST_STATUS.PUBLISHED)}
+            onClick={() => handleFilterChange(POST_STATUS.PUBLISHED)}
             className={`filter-tab ${filter === POST_STATUS.PUBLISHED ? 'active' : ''}`}
           >
             Published
           </button>
           <button
-            onClick={() => setFilter(POST_STATUS.DRAFT)}
+            onClick={() => handleFilterChange(POST_STATUS.DRAFT)}
             className={`filter-tab ${filter === POST_STATUS.DRAFT ? 'active' : ''}`}
           >
             Drafts
@@ -258,29 +248,20 @@ const AdminPostList = () => {
         </div>
 
         {/* Bulk Actions Bar */}
-        {hasSelection && (
-          <div className="admin-card" style={{ 
-            marginBottom: 'var(--space-4)', 
-            padding: 'var(--space-4)',
+        {selectedPosts.size > 0 && (
+          <div className="bulk-actions-bar" style={{
+            padding: '1rem',
+            marginBottom: '1rem',
+            backgroundColor: '#f0f0f0',
+            borderRadius: '8px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            flexWrap: 'wrap',
-            gap: 'var(--space-4)'
+            gap: '1rem',
           }}>
-            <div style={{ 
-              display: 'flex', 
-              alignItems: 'center', 
-              gap: 'var(--space-3)',
-              flexWrap: 'wrap'
-            }}>
-              <span style={{ 
-                fontWeight: 'var(--font-semibold)',
-                color: 'var(--text-primary)'
-              }}>
-                {selectedPosts.size} post{selectedPosts.size > 1 ? 's' : ''} selected
-              </span>
-            </div>
+            <span style={{ fontWeight: '500' }}>
+              {selectedPosts.size} post(s) selected
+            </span>
             <button
               onClick={handleBulkDelete}
               className="btn btn-danger"
@@ -305,13 +286,15 @@ const AdminPostList = () => {
                 <table className="admin-table">
                   <thead>
                     <tr>
-                      <th style={{ width: '50px' }}>
+                      <th style={{ width: '40px' }}>
                         <input
                           type="checkbox"
                           checked={isAllSelected}
+                          ref={(input) => {
+                            if (input) input.indeterminate = isSomeSelected;
+                          }}
                           onChange={handleSelectAll}
-                          style={{ cursor: 'pointer' }}
-                          title="Select all on this page"
+                          aria-label="Select all posts"
                         />
                       </th>
                       <th>Title</th>
@@ -329,7 +312,7 @@ const AdminPostList = () => {
                             type="checkbox"
                             checked={selectedPosts.has(post.id)}
                             onChange={() => handleSelectPost(post.id)}
-                            style={{ cursor: 'pointer' }}
+                            aria-label={`Select ${post.title}`}
                           />
                         </td>
                         <td data-label="Title">
@@ -371,65 +354,75 @@ const AdminPostList = () => {
               </div>
             </div>
 
-            {/* Pagination */}
-            {totalPages > 1 && (
-              <div className="pagination" style={{ marginTop: 'var(--space-6)' }}>
+            {/* Pagination Controls */}
+            {pagination.totalPages > 1 && (
+              <div className="pagination" style={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                gap: '0.5rem',
+                marginTop: '2rem',
+                flexWrap: 'wrap',
+              }}>
+                <button
+                  onClick={() => handlePageChange(1)}
+                  disabled={currentPage === 1}
+                  className="btn btn-sm btn-outline"
+                >
+                  First
+                </button>
                 <button
                   onClick={() => handlePageChange(currentPage - 1)}
                   disabled={currentPage === 1}
-                  className="btn btn-outline"
+                  className="btn btn-sm btn-outline"
                 >
-                  ← Previous
+                  Previous
                 </button>
                 
                 {/* Page Numbers */}
-                <div className="pagination-numbers">
-                  {Array.from({ length: totalPages }, (_, i) => i + 1)
-                    .filter(pageNum => {
-                      // Show first page, last page, current page, and pages around current
-                      return (
-                        pageNum === 1 ||
-                        pageNum === totalPages ||
-                        (pageNum >= currentPage - 1 && pageNum <= currentPage + 1)
-                      );
-                    })
-                    .map((pageNum, index, array) => {
-                      // Add ellipsis if there's a gap
-                      const showEllipsisBefore = index > 0 && pageNum - array[index - 1] > 1;
-                      return (
-                        <span key={pageNum}>
-                          {showEllipsisBefore && <span className="pagination-ellipsis">...</span>}
-                          <button
-                            onClick={() => handlePageChange(pageNum)}
-                            className={`btn ${pageNum === currentPage ? 'btn-primary' : 'btn-outline'}`}
-                            style={{ minWidth: '40px' }}
-                          >
-                            {pageNum}
-                          </button>
-                        </span>
-                      );
-                    })}
-                </div>
+                {Array.from({ length: Math.min(5, pagination.totalPages) }, (_, i) => {
+                  let pageNum;
+                  if (pagination.totalPages <= 5) {
+                    pageNum = i + 1;
+                  } else if (currentPage <= 3) {
+                    pageNum = i + 1;
+                  } else if (currentPage >= pagination.totalPages - 2) {
+                    pageNum = pagination.totalPages - 4 + i;
+                  } else {
+                    pageNum = currentPage - 2 + i;
+                  }
+                  
+                  return (
+                    <button
+                      key={pageNum}
+                      onClick={() => handlePageChange(pageNum)}
+                      className={`btn btn-sm ${currentPage === pageNum ? 'btn-primary' : 'btn-outline'}`}
+                    >
+                      {pageNum}
+                    </button>
+                  );
+                })}
                 
                 <button
                   onClick={() => handlePageChange(currentPage + 1)}
-                  disabled={currentPage === totalPages}
-                  className="btn btn-outline"
+                  disabled={currentPage >= pagination.totalPages}
+                  className="btn btn-sm btn-outline"
                 >
-                  Next →
+                  Next
                 </button>
+                <button
+                  onClick={() => handlePageChange(pagination.totalPages)}
+                  disabled={currentPage >= pagination.totalPages}
+                  className="btn btn-sm btn-outline"
+                >
+                  Last
+                </button>
+                
+                <span style={{ marginLeft: '1rem', color: '#666' }}>
+                  Page {currentPage} of {pagination.totalPages} ({pagination.total} total)
+                </span>
               </div>
             )}
-
-            {/* Pagination Info */}
-            <div style={{ 
-              textAlign: 'center', 
-              marginTop: 'var(--space-4)',
-              color: 'var(--text-secondary)',
-              fontSize: 'var(--text-sm)'
-            }}>
-              Showing {startIndex + 1} to {endIndex} of {pagination.total} post{pagination.total !== 1 ? 's' : ''}
-            </div>
           </>
         ) : (
           <div className="admin-card">

@@ -63,6 +63,7 @@ export const API_ACTIONS = {
   CREATE_POST: 'createPost',
   UPDATE_POST: 'updatePost',
   DELETE_POST: 'deletePost',
+  BULK_DELETE_POSTS: 'bulkDeletePosts',
   UPLOAD_MEDIA: 'uploadMedia',
   GET_MEDIA_FILES: 'getMediaFiles',
   DELETE_MEDIA: 'deleteMedia',

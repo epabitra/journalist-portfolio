@@ -29,18 +29,52 @@ export const AuthProvider = ({ children }) => {
 
   /**
    * Check if user is authenticated
+   * Actually validates token with backend
    */
-  const checkAuth = useCallback(() => {
+  const checkAuth = useCallback(async () => {
     try {
-      const isAuth = authService.isAuthenticated();
-      const currentUser = authService.getCurrentUser();
+      setIsLoading(true);
       
-      setIsAuthenticated(isAuth);
-      setUser(currentUser);
+      // First check if token exists locally
+      const hasToken = authService.isAuthenticated();
+      if (!hasToken) {
+        setIsAuthenticated(false);
+        setUser(null);
+        setIsLoading(false);
+        return;
+      }
+
+      // Validate token with backend
+      const isValid = await authService.validateToken();
+      
+      if (isValid) {
+        const currentUser = authService.getCurrentUser();
+        setIsAuthenticated(true);
+        setUser(currentUser);
+      } else {
+        // Token is invalid - clear storage and redirect
+        authService.logout().catch(() => {
+          // Ignore logout errors, just clear local state
+        });
+        setIsAuthenticated(false);
+        setUser(null);
+        
+        // Redirect to login if on admin page
+        if (window.location.pathname.startsWith('/admin') && 
+            !window.location.pathname.includes('/login')) {
+          window.location.href = '/admin/login';
+        }
+      }
     } catch (error) {
       console.error('Auth check error:', error);
       setIsAuthenticated(false);
       setUser(null);
+      
+      // Redirect to login if on admin page
+      if (window.location.pathname.startsWith('/admin') && 
+          !window.location.pathname.includes('/login')) {
+        window.location.href = '/admin/login';
+      }
     } finally {
       setIsLoading(false);
     }

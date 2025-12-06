@@ -787,6 +787,32 @@ export const adminAPI = {
   },
 
   /**
+   * Bulk delete posts
+   */
+  bulkDeletePosts: async (ids) => {
+    try {
+      const token = tokenStorage.get();
+      // Use form data to avoid CORS preflight
+      const params = new URLSearchParams();
+      params.append('action', API_ACTIONS.BULK_DELETE_POSTS);
+      params.append('token', token || '');
+      
+      // Add IDs as JSON string
+      params.append('ids', JSON.stringify(ids));
+      
+      const response = await apiClient.post('', params.toString(), {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+      });
+      return response;
+    } catch (error) {
+      console.error('Bulk delete posts error:', error);
+      throw error;
+    }
+  },
+
+  /**
    * Upload media file
    * WORKAROUND: Convert file to base64 and send as URL-encoded form data
    * This avoids CORS preflight issues with multipart/form-data

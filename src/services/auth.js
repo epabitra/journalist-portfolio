@@ -158,11 +158,67 @@ class AuthService {
   }
 
   /**
-   * Check if user is authenticated
+   * Check if user is authenticated (only checks if token exists in storage)
+   * Use validateToken() to actually verify with backend
    */
   isAuthenticated() {
     const token = tokenStorage.get();
     return !!token;
+  }
+
+  /**
+   * Validate token with backend
+   * Returns true if token is valid, false otherwise
+   */
+  async validateToken() {
+    const token = tokenStorage.get();
+    if (!token) {
+      return false;
+    }
+
+    try {
+      // Use a lightweight authenticated endpoint to validate the token
+      // getProfile is a good choice as it's fast and requires auth
+      const response = await adminAPI.getProfile();
+      
+      // Handle different response structures from Google Apps Script
+      let responseData = response;
+      if (response && typeof response === 'object' && 'data' in response && 'status' in response) {
+        responseData = response.data;
+      }
+      
+      // Check if response indicates success
+      // Google Apps Script typically returns { success: true, data: {...} }
+      if (responseData && (responseData.success === true || responseData.data)) {
+        // Token is valid
+        return true;
+      }
+      
+      // If response doesn't indicate success, token might be invalid
+      return false;
+    } catch (error) {
+      // If we get 401 or token validation fails, token is invalid
+      if (error.response?.status === 401 || 
+          error.code === 'TOKEN_REFRESH_FAILED' ||
+          error.code === 'UNAUTHORIZED') {
+        console.log('Token validation failed - token is invalid or expired');
+        return false;
+      }
+      
+      // Check error message for unauthorized
+      if (error.message && (
+          error.message.includes('unauthorized') || 
+          error.message.includes('Unauthorized') ||
+          error.message.includes('not authorized'))) {
+        console.log('Token validation failed - unauthorized');
+        return false;
+      }
+      
+      // For other errors (network, etc.), we'll be conservative and return false
+      // This ensures invalid tokens don't allow access
+      console.warn('Token validation error:', error);
+      return false;
+    }
   }
 
   /**
