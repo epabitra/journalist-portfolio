@@ -424,8 +424,26 @@ const ProfileEditor = () => {
               {profileImagePreview && (
                 <div className="form-group">
                   <label>Preview</label>
-                  <div className="image-preview">
-                    <img src={profileImagePreview} alt="Profile preview" />
+                  <div className="image-preview" style={{ position: 'relative' }}>
+                    <img 
+                      src={profileImagePreview} 
+                      alt="Profile preview"
+                      onError={(e) => {
+                        console.error('Image failed to load:', profileImagePreview);
+                        e.target.style.display = 'none';
+                        const errorDiv = document.createElement('div');
+                        errorDiv.innerHTML = `
+                          <div style="padding: var(--space-4); text-align: center; color: var(--error);">
+                            <p style="font-weight: bold; margin-bottom: var(--space-2);">⚠️ Error loading image</p>
+                            <p style="font-size: var(--text-sm);">This image format may not be supported. Please use JPEG, PNG, GIF, or WebP format.</p>
+                            <p style="font-size: var(--text-sm); margin-top: var(--space-2);">
+                              If this is a HEIC file from Mac, please convert it to JPEG first.
+                            </p>
+                          </div>
+                        `;
+                        e.target.parentElement.appendChild(errorDiv);
+                      }}
+                    />
                   </div>
                 </div>
               )}
@@ -435,7 +453,7 @@ const ProfileEditor = () => {
                 <input
                   type="file"
                   id="profile_image_upload"
-                  accept="image/*"
+                  accept="image/jpeg,image/jpg,image/png,image/gif,image/webp,image/heic,image/heif"
                   onChange={(e) => {
                     const file = e.target.files?.[0];
                     if (file) {
@@ -444,6 +462,9 @@ const ProfileEditor = () => {
                   }}
                   disabled={uploading}
                 />
+                <p style={{ fontSize: 'var(--text-sm)', color: 'var(--text-tertiary)', marginTop: 'var(--space-2)' }}>
+                  Supported formats: JPEG, PNG, GIF, WebP, HEIC. HEIC images from Mac will be automatically converted to JPEG.
+                </p>
                 {uploading && (
                   <div className="upload-progress">
                     <div className="progress-bar">

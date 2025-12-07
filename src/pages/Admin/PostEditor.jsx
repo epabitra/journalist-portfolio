@@ -683,7 +683,7 @@ const AdminPostEditor = () => {
                   <input
                     type="file"
                     id="cover_image_upload"
-                    accept="image/*"
+                    accept="image/jpeg,image/jpg,image/png,image/gif,image/webp,image/heic,image/heif"
                     onChange={(e) => {
                       const file = e.target.files[0];
                       if (file) handleFileUpload(file, 'cover');
@@ -691,6 +691,9 @@ const AdminPostEditor = () => {
                     disabled={uploading}
                     style={{ display: 'none' }}
                   />
+                  <p style={{ fontSize: 'var(--text-sm)', color: 'var(--text-tertiary)', marginTop: 'var(--space-2)' }}>
+                    Supported: JPEG, PNG, GIF, WebP. HEIC images from Mac will be automatically converted to JPEG.
+                  </p>
                 </div>
                 {uploading && uploadingType === 'cover' && (
                   <div style={{ 
@@ -715,11 +718,29 @@ const AdminPostEditor = () => {
                   marginTop: 'var(--space-4)',
                   borderRadius: 'var(--radius-md)',
                   overflow: 'hidden',
-                  border: '1px solid var(--border-light)'
+                  border: '1px solid var(--border-light)',
+                  position: 'relative',
+                  minHeight: '200px',
+                  background: 'var(--bg-secondary)'
                 }}>
                   <img 
                     src={coverImagePreview} 
-                    alt="Cover preview" 
+                    alt="Cover preview"
+                    onError={(e) => {
+                      console.error('Image failed to load:', coverImagePreview);
+                      e.target.style.display = 'none';
+                      const errorDiv = document.createElement('div');
+                      errorDiv.innerHTML = `
+                        <div style="padding: var(--space-4); text-align: center; color: var(--error);">
+                          <p style="font-weight: bold; margin-bottom: var(--space-2);">⚠️ Error loading image</p>
+                          <p style="font-size: var(--text-sm);">This image format may not be supported. Please use JPEG, PNG, GIF, or WebP format.</p>
+                          <p style="font-size: var(--text-sm); margin-top: var(--space-2);">
+                            If this is a HEIC file from Mac, please convert it to JPEG first.
+                          </p>
+                        </div>
+                      `;
+                      e.target.parentElement.appendChild(errorDiv);
+                    }}
                     style={{ 
                       width: '100%', 
                       maxHeight: '300px', 
@@ -916,7 +937,7 @@ const AdminPostEditor = () => {
                     <input
                       type="file"
                       id="media_upload"
-                      accept={watchedMediaType === MEDIA_TYPE.VIDEO ? 'video/*' : 'image/*'}
+                      accept={watchedMediaType === MEDIA_TYPE.VIDEO ? 'video/mp4,video/webm,video/quicktime' : 'image/jpeg,image/jpg,image/png,image/gif,image/webp,image/heic,image/heif'}
                       multiple
                       onChange={(e) => {
                         const files = Array.from(e.target.files || []);
@@ -930,6 +951,9 @@ const AdminPostEditor = () => {
                     />
                     <p style={{ fontSize: 'var(--text-sm)', color: 'var(--text-secondary)', marginTop: 'var(--space-2)' }}>
                       Maximum 10 files allowed. Currently: {mediaUrls.length} / 10
+                    </p>
+                    <p style={{ fontSize: 'var(--text-sm)', color: 'var(--text-tertiary)', marginTop: 'var(--space-1)' }}>
+                      Supported formats: JPEG, PNG, GIF, WebP, HEIC. HEIC images from Mac will be automatically converted to JPEG.
                     </p>
                     {uploading && uploadingType === 'media' && (
                       <div style={{ 
@@ -1000,7 +1024,18 @@ const AdminPostEditor = () => {
                             ) : (
                               <img 
                                 src={url} 
-                                alt={`Media ${index + 1}`} 
+                                alt={`Media ${index + 1}`}
+                                onError={(e) => {
+                                  console.error('Media image failed to load:', url);
+                                  e.target.style.display = 'none';
+                                  const errorDiv = document.createElement('div');
+                                  errorDiv.style.cssText = 'padding: var(--space-4); text-align: center; color: var(--error); position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; flex-direction: column;';
+                                  errorDiv.innerHTML = `
+                                    <p style="font-weight: bold; margin-bottom: var(--space-2);">⚠️ Error loading image</p>
+                                    <p style="font-size: var(--text-sm);">Unsupported format</p>
+                                  `;
+                                  e.target.parentElement.appendChild(errorDiv);
+                                }}
                                 style={{ 
                                   width: '100%', 
                                   height: '100%', 

@@ -106,6 +106,7 @@ export const FILE_UPLOAD = {
   MAX_IMAGE_SIZE: 5 * 1024 * 1024, // 5MB
   MAX_VIDEO_SIZE: 100 * 1024 * 1024, // 100MB
   ALLOWED_IMAGE_TYPES: ['image/jpeg', 'image/png', 'image/gif', 'image/webp'],
+  // Note: HEIC files are detected and converted to JPEG automatically
   ALLOWED_VIDEO_TYPES: ['video/mp4', 'video/webm', 'video/quicktime'],
 };
 

@@ -7,6 +7,16 @@ import { ref, uploadBytesResumable, getDownloadURL, deleteObject } from 'firebas
 import { storage, isFirebaseConfigured } from '@/config/firebase';
 import { FILE_UPLOAD } from '@/config/constants';
 import { toast } from 'react-toastify';
+import { convertHEICToJPEG, isHEICFile, getImageFormatError } from '@/utils/imageConverter';
+
+/**
+ * Gets file extension from filename
+ */
+const getFileExtension = (filename) => {
+  if (!filename) return '';
+  const parts = filename.split('.');
+  return parts.length > 1 ? parts[parts.length - 1].toLowerCase() : '';
+};
 
 /**
  * Validates file before upload
@@ -24,7 +34,28 @@ const validateFile = (file, type = 'image') => {
     throw new Error(`File size exceeds maximum allowed size of ${maxSizeMB}MB`);
   }
 
+  // Note: HEIC files are automatically converted before reaching validation
+  // So we don't need to reject them here - they'll already be JPEG by validation time
+
+  // Check file extension for images (more reliable than MIME type)
+  // Note: HEIC files are handled separately and converted automatically
+  if (type === 'image') {
+    const extension = getFileExtension(file.name);
+    // Exclude HEIC extensions as they are automatically converted
+    const unsupportedExtensions = ['tiff', 'tif', 'bmp', 'raw', 'cr2', 'nef', 'orf', 'arw'];
+    if (unsupportedExtensions.includes(extension)) {
+      const errorMsg = getImageFormatError(file);
+      throw new Error(errorMsg);
+    }
+  }
+
+  // Validate MIME type
   if (!allowedTypes.includes(file.type)) {
+    // Provide more helpful error message for unsupported formats
+    if (type === 'image') {
+      const formatError = getImageFormatError(file);
+      throw new Error(formatError);
+    }
     throw new Error(`File type not allowed. Allowed types: ${allowedTypes.join(', ')}`);
   }
 
@@ -63,17 +94,37 @@ export const uploadFile = async (file, options = {}) => {
   const { folder = 'uploads', type = 'image', onProgress } = options;
 
   try {
-    // Validate file
-    validateFile(file, type);
+    // Automatically convert HEIC files to JPEG before validation and upload
+    let fileToUpload = file;
+    if (type === 'image' && isHEICFile(file)) {
+      try {
+        toast.info('Converting HEIC image to JPEG format...', { autoClose: 3000 });
+        fileToUpload = await convertHEICToJPEG(file, (progress) => {
+          // Update progress if callback is provided
+          if (onProgress && progress === 100) {
+            // Conversion complete, now start upload
+            toast.success('HEIC image converted successfully, uploading...', { autoClose: 2000 });
+          }
+        });
+      } catch (conversionError) {
+        // If conversion fails, show helpful error
+        const errorMsg = conversionError.message || getImageFormatError(file);
+        toast.error(errorMsg, { autoClose: 10000 });
+        throw new Error(errorMsg);
+      }
+    }
+    
+    // Validate file (use converted file if HEIC was converted)
+    validateFile(fileToUpload, type);
 
-    // Generate file path
-    const filePath = generateFilePath(file, folder);
+    // Generate file path (use converted file name if HEIC was converted)
+    const filePath = generateFilePath(fileToUpload, folder);
 
     // Create storage reference
     const storageRef = ref(storage, filePath);
 
-    // Create upload task
-    const uploadTask = uploadBytesResumable(storageRef, file);
+    // Create upload task (use converted file if HEIC was converted)
+    const uploadTask = uploadBytesResumable(storageRef, fileToUpload);
 
     // Return promise that resolves with download URL
     return new Promise((resolve, reject) => {
