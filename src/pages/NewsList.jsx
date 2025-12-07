@@ -185,7 +185,7 @@ const NewsList = () => {
                     <article key={post.id} className="post-card">
                       {post.cover_image_url && (
                         <div className="post-image">
-                          <Link to={`${ROUTES.BLOG}/${post.slug}`}>
+                          <Link to={`${ROUTES.NEWS}/${post.slug}`}>
                             <img src={post.cover_image_url} alt={`${post.title} - By Sugyan Sagar`} loading="lazy" />
                           </Link>
                         </div>
@@ -217,7 +217,7 @@ const NewsList = () => {
                           })()}
                         </div>
                         <h2>
-                          <Link to={`${ROUTES.BLOG}/${post.slug}`}>{post.title}</Link>
+                          <Link to={`${ROUTES.NEWS}/${post.slug}`}>{post.title}</Link>
                         </h2>
                         {post.subtitle && (
                           <p style={{ fontSize: 'var(--text-sm)', color: 'var(--text-tertiary)', marginBottom: 'var(--space-2)', fontStyle: 'italic' }}>
@@ -246,7 +246,7 @@ const NewsList = () => {
                             </span>
                           )}
                         </div>
-                        <Link to={`${ROUTES.BLOG}/${post.slug}`} className="read-more">
+                        <Link to={`${ROUTES.NEWS}/${post.slug}`} className="read-more">
                           Read More →
                         </Link>
                       </div>

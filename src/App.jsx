@@ -24,6 +24,7 @@ import About from '@/pages/About';
 import BlogList from '@/pages/BlogList';
 import BlogDetail from '@/pages/BlogDetail';
 import NewsList from '@/pages/NewsList';
+import NewsDetail from '@/pages/NewsDetail';
 import Portfolio from '@/pages/Portfolio';
 import Contact from '@/pages/Contact';
 
@@ -88,6 +89,14 @@ function App() {
                 element={
                   <MainLayout>
                     <NewsList />
+                  </MainLayout>
+                }
+              />
+              <Route
+                path={ROUTES.NEWS_DETAIL}
+                element={
+                  <MainLayout>
+                    <NewsDetail />
                   </MainLayout>
                 }
               />

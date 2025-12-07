@@ -1,6 +1,6 @@
 /**
- * Professional Blog Detail Page with Realistic Content
- * Enhanced reading experience with full content
+ * News Detail Page
+ * Enhanced reading experience with full content for news posts
  */
 
 import { useState, useEffect } from 'react';
@@ -17,7 +17,7 @@ import MediaCarousel from '@/components/ImageCarousel/MediaCarousel';
 import { ENV } from '@/config/env';
 import { ROUTES as APP_ROUTES, MEDIA_TYPE } from '@/config/constants';
 
-const BlogDetail = () => {
+const NewsDetail = () => {
   const { slug } = useParams();
   const navigate = useNavigate();
   const [post, setPost] = useState(null);
@@ -53,12 +53,12 @@ const BlogDetail = () => {
       if (postData?.success && postData.data) {
         setPost(postData.data);
 
-        // Load related posts (filter by blog type)
+        // Load related posts (filter by news type)
         try {
           const relatedData = await publicAPI.listPosts({
             limit: 3,
             status: 'published',
-            type: 'blog',
+            type: 'news',
             exclude: postData.data.id,
           }).catch(() => null);
           
@@ -72,30 +72,30 @@ const BlogDetail = () => {
           setRelatedPosts([]);
         }
       } else {
-        setError('Post not found');
+        setError('News post not found');
       }
     } catch (err) {
-      console.error('Error loading post:', err);
-      setError(err.message || 'Failed to load post');
+      console.error('Error loading news post:', err);
+      setError(err.message || 'Failed to load news post');
     } finally {
       setLoading(false);
     }
   };
 
   if (loading) {
-    return <Loading fullScreen message="Loading post..." />;
+    return <Loading fullScreen message="Loading news..." />;
   }
 
   if (error || !post) {
     return (
       <div className="error-container">
         <div className="error-message">
-          <h2>Post Not Found</h2>
-          <p>{error || 'The post you are looking for does not exist.'}</p>
+          <h2>News Post Not Found</h2>
+          <p>{error || 'The news post you are looking for does not exist.'}</p>
         </div>
         <div style={{ display: 'flex', gap: 'var(--space-4)', justifyContent: 'center' }}>
-          <button className="btn btn-primary" onClick={() => navigate(APP_ROUTES.BLOG)}>
-            Back to Blog
+          <button className="btn btn-primary" onClick={() => navigate(APP_ROUTES.NEWS)}>
+            Back to News
           </button>
           <button className="btn btn-outline" onClick={() => navigate(APP_ROUTES.HOME)}>
             Go Home
@@ -109,8 +109,8 @@ const BlogDetail = () => {
     ? post.tags.split(',').map(t => t.trim()).filter(Boolean)
     : Array.isArray(post.tags) ? post.tags : [];
 
-  // Prepare schema data
-  const articleUrl = `${ENV.SITE_URL || 'https://sugyansagar.com'}${APP_ROUTES.BLOG}/${post.slug}`;
+  // Prepare schema data - use NEWS route for news posts
+  const articleUrl = `${ENV.SITE_URL || 'https://sugyansagar.com'}${APP_ROUTES.NEWS}/${post.slug}`;
   const articleSchemaData = {
     headline: post.seo_title || post.title,
     description: post.seo_description || post.excerpt || post.title,
@@ -124,11 +124,11 @@ const BlogDetail = () => {
     keywords: tags.length > 0 ? tags.join(', ') : undefined,
   };
 
-  // Breadcrumb schema
+  // Breadcrumb schema - use News instead of Blog
   const breadcrumbData = {
     items: [
       { name: 'Home', url: ENV.SITE_URL || 'https://sugyansagar.com' },
-      { name: 'Blog', url: `${ENV.SITE_URL || 'https://sugyansagar.com'}${APP_ROUTES.BLOG}` },
+      { name: 'News', url: `${ENV.SITE_URL || 'https://sugyansagar.com'}${APP_ROUTES.NEWS}` },
       { name: post.title, url: articleUrl },
     ],
   };
@@ -186,33 +186,28 @@ const BlogDetail = () => {
             const mediaType = post.media_type;
             
             // Check for media_urls (new format - array)
-            // Google Apps Script should already parse it to array, but handle both cases
             if (post.media_urls) {
               if (Array.isArray(post.media_urls)) {
                 mediaUrls = post.media_urls.filter(url => url && url.trim() !== '');
               } else if (typeof post.media_urls === 'string' && post.media_urls.trim() !== '') {
                 try {
-                  // Try to parse as JSON
                   const parsed = JSON.parse(post.media_urls);
                   if (Array.isArray(parsed)) {
                     mediaUrls = parsed.filter(url => url && url.trim() !== '');
                   } else {
-                    // Single value, wrap in array
                     mediaUrls = [parsed].filter(url => url && url.trim() !== '');
                   }
                 } catch (e) {
-                  // If parsing fails, treat as single URL
                   mediaUrls = [post.media_urls].filter(url => url && url.trim() !== '');
                 }
               }
             }
             
-            // Backward compatibility: if media_url exists (old format) and no media_urls, use it
+            // Backward compatibility
             if (mediaUrls.length === 0 && post.media_url) {
               mediaUrls = [post.media_url];
             }
             
-            // Only show carousel if we have media URLs and media type is set
             if (mediaUrls.length > 0 && mediaType && mediaType !== MEDIA_TYPE.NONE && mediaType !== 'none') {
               const isVideo = mediaType === MEDIA_TYPE.VIDEO || mediaType === 'video';
               const items = mediaUrls.map(url => ({
@@ -267,17 +262,14 @@ const BlogDetail = () => {
 
           {/* Share Section */}
           {(() => {
-            // Prepare share data - use absolute URL for better compatibility
             const shareUrl = articleUrl || window.location.href;
             const shareTitle = post.title || '';
             const shareDescription = post.excerpt || post.subtitle || post.title || '';
             const shareText = `${shareTitle}${shareDescription ? ` - ${shareDescription}` : ''}`;
             
-            // Build share URLs with proper parameters
             const shareLinks = {
               twitter: `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`,
               facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}&quote=${encodeURIComponent(shareText)}`,
-              // LinkedIn: Use simpler format - LinkedIn will fetch OG tags from the URL
               linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`,
               whatsapp: `https://wa.me/?text=${encodeURIComponent(`${shareText} ${shareUrl}`)}`,
               telegram: `https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareText)}`,
@@ -285,15 +277,12 @@ const BlogDetail = () => {
               reddit: `https://reddit.com/submit?url=${encodeURIComponent(shareUrl)}&title=${encodeURIComponent(shareTitle)}`,
             };
 
-            // Copy to clipboard function
             const handleCopyLink = async () => {
               try {
                 await navigator.clipboard.writeText(shareUrl);
-                // You could add a toast notification here
                 alert('Link copied to clipboard!');
               } catch (err) {
                 console.error('Failed to copy:', err);
-                // Fallback for older browsers
                 const textArea = document.createElement('textarea');
                 textArea.value = shareUrl;
                 document.body.appendChild(textArea);
@@ -312,7 +301,7 @@ const BlogDetail = () => {
                 borderRadius: 'var(--radius-lg)',
                 textAlign: 'center'
               }}>
-                <h3 style={{ marginBottom: 'var(--space-4)', fontSize: 'var(--text-lg)', fontWeight: 'var(--font-semibold)' }}>Share This Story</h3>
+                <h3 style={{ marginBottom: 'var(--space-4)', fontSize: 'var(--text-lg)', fontWeight: 'var(--font-semibold)' }}>Share This News</h3>
                 <p style={{ 
                   fontSize: 'var(--text-sm)', 
                   color: 'var(--text-secondary)', 
@@ -320,7 +309,7 @@ const BlogDetail = () => {
                   maxWidth: '600px',
                   margin: '0 auto var(--space-6)'
                 }}>
-                  Help spread the word by sharing this story on your favorite platforms
+                  Help spread the word by sharing this news on your favorite platforms
                 </p>
                 <div style={{ display: 'flex', gap: 'var(--space-3)', justifyContent: 'center', flexWrap: 'wrap' }}>
                   <a 
@@ -415,8 +404,8 @@ const BlogDetail = () => {
             flexWrap: 'wrap',
             gap: 'var(--space-4)'
           }}>
-            <Link to={APP_ROUTES.BLOG} className="btn btn-outline">
-              ← Back to Blog
+            <Link to={APP_ROUTES.NEWS} className="btn btn-outline">
+              ← Back to News
             </Link>
             <Link to={APP_ROUTES.CONTACT} className="btn btn-primary">
               Get In Touch
@@ -431,7 +420,7 @@ const BlogDetail = () => {
               borderTop: '2px solid var(--border-light)'
             }}>
               <h2 style={{ marginBottom: 'var(--space-8)', textAlign: 'center' }}>
-                Related Stories
+                Related News
               </h2>
               <div className="posts-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))' }}>
                 {relatedPosts.map((relatedPost) => {
@@ -482,4 +471,4 @@ const BlogDetail = () => {
   );
 };
 
-export default BlogDetail;
+export default NewsDetail;
