@@ -6,53 +6,54 @@
   
   <!-- Home Page -->
   <url>
-    <loc>https://sugyansagar.com/</loc>
-    <lastmod>2024-01-15</lastmod>
+    <loc>https://www.sugyansagar.com/</loc>
+    <lastmod>2024-12-08</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   
   <!-- About Page -->
   <url>
-    <loc>https://sugyansagar.com/about</loc>
-    <lastmod>2024-01-15</lastmod>
+    <loc>https://www.sugyansagar.com/about</loc>
+    <lastmod>2024-12-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   
   <!-- Blog List -->
   <url>
-    <loc>https://sugyansagar.com/blog</loc>
-    <lastmod>2024-01-15</lastmod>
+    <loc>https://www.sugyansagar.com/blog</loc>
+    <lastmod>2024-12-08</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+  
+  <!-- News List -->
+  <url>
+    <loc>https://www.sugyansagar.com/news</loc>
+    <lastmod>2024-12-08</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
   
   <!-- Portfolio -->
   <url>
-    <loc>https://sugyansagar.com/portfolio</loc>
-    <lastmod>2024-01-15</lastmod>
+    <loc>https://www.sugyansagar.com/portfolio</loc>
+    <lastmod>2024-12-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   
   <!-- Contact -->
   <url>
-    <loc>https://sugyansagar.com/contact</loc>
-    <lastmod>2024-01-15</lastmod>
+    <loc>https://www.sugyansagar.com/contact</loc>
+    <lastmod>2024-12-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   
-  <!-- Add individual blog posts here as you publish them -->
-  <!-- Example:
-  <url>
-    <loc>https://sugyansagar.com/blog/post-slug</loc>
-    <lastmod>2024-01-15</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  -->
+  <!-- Note: Individual blog posts and news articles should be dynamically added here -->
+  <!-- Consider generating this sitemap dynamically from your content API -->
   
 </urlset>
 

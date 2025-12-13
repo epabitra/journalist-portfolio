@@ -1,8 +1,23 @@
+# robots.txt for www.sugyansagar.com
 User-agent: *
 Allow: /
 Disallow: /admin/
 Disallow: /api/
 
-Sitemap: https://sugyansagar.com/sitemap.xml
+# Crawl-delay (optional, helps prevent overwhelming the server)
+Crawl-delay: 1
+
+# Sitemap location
+Sitemap: https://www.sugyansagar.com/sitemap.xml
+
+# Allow all major search engines
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: Slurp
+Allow: /
 
 

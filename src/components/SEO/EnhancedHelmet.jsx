@@ -20,8 +20,10 @@ const EnhancedHelmet = ({
   noindex = false,
 }) => {
   const location = useLocation();
-  const siteUrl = ENV.SITE_URL || 'https://sugyansagar.com';
-  const currentUrl = canonicalUrl || `${siteUrl}${location.pathname}`;
+  const siteUrl = ENV.SITE_URL || 'https://www.sugyansagar.com';
+  // Ensure URL doesn't have double slashes
+  const pathname = location.pathname === '/' ? '' : location.pathname;
+  const currentUrl = canonicalUrl || `${siteUrl}${pathname}`;
   const fullTitle = title ? `${title} | ${ENV.SITE_NAME}` : `${ENV.SITE_NAME} - Sugyan Sagar`;
   
   // Default description with name
@@ -45,8 +47,11 @@ const EnhancedHelmet = ({
       <meta name="description" content={defaultDescription} />
       <meta name="keywords" content={defaultKeywords} />
       <meta name="author" content={author} />
-      <meta name="robots" content={noindex ? 'noindex, nofollow' : 'index, follow'} />
+      <meta name="robots" content={noindex ? 'noindex, nofollow' : 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1'} />
+      <meta name="googlebot" content={noindex ? 'noindex, nofollow' : 'index, follow'} />
       <link rel="canonical" href={currentUrl} />
+      <link rel="alternate" hreflang="en" href={currentUrl} />
+      <link rel="alternate" hreflang="x-default" href={currentUrl} />
 
       {/* Open Graph / Facebook */}
       <meta property="og:type" content={type} />
@@ -54,16 +59,22 @@ const EnhancedHelmet = ({
       <meta property="og:title" content={fullTitle} />
       <meta property="og:description" content={defaultDescription} />
       <meta property="og:image" content={ogImage} />
+      <meta property="og:image:width" content="1200" />
+      <meta property="og:image:height" content="630" />
+      <meta property="og:image:alt" content={fullTitle} />
       <meta property="og:site_name" content={ENV.SITE_NAME || 'Sugyan Sagar'} />
       <meta property="og:locale" content="en_US" />
+      <meta property="og:locale:alternate" content="en_IN" />
 
       {/* Twitter */}
       <meta name="twitter:card" content="summary_large_image" />
+      <meta name="twitter:site" content="@sugyansagar" />
+      <meta name="twitter:creator" content="@sugyansagar" />
       <meta name="twitter:url" content={currentUrl} />
       <meta name="twitter:title" content={fullTitle} />
       <meta name="twitter:description" content={defaultDescription} />
       <meta name="twitter:image" content={ogImage} />
-      <meta name="twitter:creator" content="@sugyansagar" />
+      <meta name="twitter:image:alt" content={fullTitle} />
 
       {/* Article specific meta tags */}
       {type === 'article' && publishedTime && (
@@ -75,6 +86,14 @@ const EnhancedHelmet = ({
       {type === 'article' && author && (
         <meta property="article:author" content={author} />
       )}
+      
+      {/* Additional SEO Meta Tags */}
+      <meta name="format-detection" content="telephone=no" />
+      <meta httpEquiv="x-ua-compatible" content="ie=edge" />
+      <meta name="mobile-web-app-capable" content="yes" />
+      <meta name="apple-mobile-web-app-capable" content="yes" />
+      <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+      <meta name="apple-mobile-web-app-title" content="Sugyan Sagar" />
     </Helmet>
   );
 };

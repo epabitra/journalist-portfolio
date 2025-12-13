@@ -14,7 +14,7 @@ const SchemaMarkup = ({ type, data }) => {
           '@type': 'Person',
           name: data.name || 'Sugyan Sagar',
           alternateName: data.alternateName || ['Sugyansagar', 'S. Sagar'],
-          url: data.url || 'https://sugyansagar.com',
+          url: data.url || 'https://www.sugyansagar.com',
           image: data.image,
           jobTitle: data.jobTitle || 'Award-Winning Journalist',
           worksFor: data.worksFor || {
@@ -35,7 +35,7 @@ const SchemaMarkup = ({ type, data }) => {
           '@type': 'WebSite',
           name: data.name || 'Sugyan Sagar',
           alternateName: data.alternateName || 'Sugyansagar',
-          url: data.url || 'https://sugyansagar.com',
+          url: data.url || 'https://www.sugyansagar.com',
           description: data.description || 'Official website of award-winning journalist Sugyan Sagar',
           author: {
             '@type': 'Person',
@@ -45,7 +45,7 @@ const SchemaMarkup = ({ type, data }) => {
             '@type': 'SearchAction',
             target: {
               '@type': 'EntryPoint',
-              urlTemplate: 'https://sugyansagar.com/blog?search={search_term_string}',
+              urlTemplate: 'https://www.sugyansagar.com/blog?search={search_term_string}',
             },
             'query-input': 'required name=search_term_string',
           },
@@ -62,14 +62,14 @@ const SchemaMarkup = ({ type, data }) => {
           author: {
             '@type': 'Person',
             name: data.authorName || 'Sugyan Sagar',
-            url: data.authorUrl || 'https://sugyansagar.com/about',
+            url: data.authorUrl || 'https://www.sugyansagar.com/about',
           },
           publisher: {
             '@type': 'Person',
             name: 'Sugyan Sagar',
             logo: {
               '@type': 'ImageObject',
-              url: data.publisherLogo || 'https://sugyansagar.com/logo.jpg',
+              url: data.publisherLogo || 'https://www.sugyansagar.com/logo.jpg',
             },
           },
           datePublished: data.datePublished,
@@ -92,6 +92,65 @@ const SchemaMarkup = ({ type, data }) => {
             name: item.name,
             item: item.url,
           })),
+        };
+
+      case 'Organization':
+        return {
+          '@context': 'https://schema.org',
+          '@type': 'Organization',
+          name: data.name || 'Sugyan Sagar',
+          url: data.url || 'https://www.sugyansagar.com',
+          logo: data.logo || 'https://www.sugyansagar.com/logo.jpg',
+          description: data.description || 'Award-winning investigative journalist',
+          founder: {
+            '@type': 'Person',
+            name: 'Sugyan Sagar',
+          },
+          sameAs: data.sameAs || [],
+        };
+
+      case 'BlogPosting':
+        return {
+          '@context': 'https://schema.org',
+          '@type': 'BlogPosting',
+          headline: data.headline,
+          description: data.description,
+          image: data.image,
+          author: {
+            '@type': 'Person',
+            name: data.authorName || 'Sugyan Sagar',
+            url: data.authorUrl || 'https://www.sugyansagar.com/about',
+          },
+          publisher: {
+            '@type': 'Person',
+            name: 'Sugyan Sagar',
+            logo: {
+              '@type': 'ImageObject',
+              url: data.publisherLogo || 'https://www.sugyansagar.com/logo.jpg',
+            },
+          },
+          datePublished: data.datePublished,
+          dateModified: data.dateModified || data.datePublished,
+          mainEntityOfPage: {
+            '@type': 'WebPage',
+            '@id': data.url,
+          },
+          articleSection: data.articleSection,
+          keywords: data.keywords,
+        };
+
+      case 'CollectionPage':
+        return {
+          '@context': 'https://schema.org',
+          '@type': 'CollectionPage',
+          name: data.name,
+          description: data.description,
+          url: data.url || 'https://www.sugyansagar.com',
+          mainEntity: {
+            '@type': 'ItemList',
+            numberOfItems: data.numberOfItems || 0,
+            itemListElement: data.items || [],
+          },
         };
 
       default:

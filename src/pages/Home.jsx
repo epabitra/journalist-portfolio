@@ -96,7 +96,7 @@ const Home = () => {
   const personSchemaData = {
     name: displayProfile?.name || 'Sugyan Sagar',
     alternateName: ['Sugyansagar'],
-    url: ENV.SITE_URL || 'https://sugyansagar.com',
+    url: ENV.SITE_URL || 'https://www.sugyansagar.com',
     image: displayProfile?.profile_image_url,
     jobTitle: displayProfile?.title || displayProfile?.headline || 'Award-Winning Journalist',
     description: displayProfile?.short_bio || displayProfile?.bio || 'Award-winning investigative journalist specializing in human rights, environmental issues, and political reporting.',
@@ -111,7 +111,7 @@ const Home = () => {
   const websiteSchemaData = {
     name: displayProfile?.name || 'Sugyan Sagar',
     alternateName: 'Sugyansagar',
-    url: ENV.SITE_URL || 'https://sugyansagar.com',
+    url: ENV.SITE_URL || 'https://www.sugyansagar.com',
     description: `${displayProfile?.name || 'Sugyan Sagar'} - Award-winning investigative journalist. Explore stories, articles, and multimedia content.`,
   };
 
@@ -129,6 +129,16 @@ const Home = () => {
       {/* Schema Markup */}
       <SchemaMarkup type="Person" data={personSchemaData} />
       <SchemaMarkup type="WebSite" data={websiteSchemaData} />
+      {/* Organization Schema for better SEO */}
+      <SchemaMarkup type="Organization" data={{
+        name: displayProfile?.name || 'Sugyan Sagar',
+        url: ENV.SITE_URL || 'https://www.sugyansagar.com',
+        logo: displayProfile?.profile_image_url,
+        description: displayProfile?.short_bio || displayProfile?.bio || 'Award-winning investigative journalist',
+        sameAs: (displaySocialLinks || [])
+          .filter(link => link.is_active !== false && link.url)
+          .map(link => link.url),
+      }} />
 
       <div className="home-page">
         {/* Hero Section */}

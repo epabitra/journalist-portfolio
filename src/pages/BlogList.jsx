@@ -120,7 +120,7 @@ const BlogList = () => {
         description="Explore the latest articles, investigative reports, and stories by Sugyan Sagar. Award-winning journalism covering human rights, environmental issues, and political reporting."
         keywords="Sugyan Sagar blog, Sugyansagar articles, journalism stories, investigative reports, news articles, human rights journalism, environmental reporting"
         type="website"
-        canonicalUrl={`${ENV.SITE_URL || 'https://sugyansagar.com'}/blog`}
+        canonicalUrl={`${ENV.SITE_URL || 'https://www.sugyansagar.com'}/blog`}
       />
 
       <div className="blog-list-page">

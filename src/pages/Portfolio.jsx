@@ -6,11 +6,12 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import EnhancedHelmet from '@/components/SEO/EnhancedHelmet';
+import SchemaMarkup from '@/components/SEO/SchemaMarkup';
+import { ENV } from '@/config/env';
 import { publicAPI } from '@/services/api';
 import { formatDate } from '@/utils/dateFormatter';
 import { ROUTES } from '@/config/constants';
 import Loading from '@/components/Loading';
-import { ENV } from '@/config/env';
 
 const Portfolio = () => {
   const [posts, setPosts] = useState([]);
@@ -76,8 +77,16 @@ const Portfolio = () => {
         description="Explore the portfolio of award-winning journalist Sugyan Sagar. Featured investigative stories, reports, and multimedia content covering human rights, environment, and politics."
         keywords="Sugyan Sagar portfolio, Sugyansagar work, journalist portfolio, featured stories, investigative journalism portfolio, award-winning journalism"
         type="website"
-        canonicalUrl={`${ENV.SITE_URL || 'https://sugyansagar.com'}/portfolio`}
+        canonicalUrl={`${ENV.SITE_URL || 'https://www.sugyansagar.com'}/portfolio`}
       />
+      
+      {/* Schema Markup */}
+      <SchemaMarkup type="CollectionPage" data={{
+        name: 'Portfolio - Featured Stories & Work by Sugyan Sagar',
+        description: 'Portfolio of award-winning journalist Sugyan Sagar featuring investigative stories, reports, and multimedia content',
+        url: `${ENV.SITE_URL || 'https://www.sugyansagar.com'}/portfolio`,
+        numberOfItems: displayPosts?.length || 0,
+      }} />
 
       <div className="portfolio-page">
         <div className="section">

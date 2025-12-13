@@ -5,11 +5,12 @@
 
 import { useState, useEffect } from 'react';
 import EnhancedHelmet from '@/components/SEO/EnhancedHelmet';
+import SchemaMarkup from '@/components/SEO/SchemaMarkup';
+import { ENV } from '@/config/env';
 import { useForm } from 'react-hook-form';
 import { publicAPI } from '@/services/api';
 import { isValidEmail } from '@/utils/validation';
 import { toast } from 'react-toastify';
-import { ENV } from '@/config/env';
 import Loading from '@/components/Loading';
 // Profile and social links are now fully dynamic - no mock data fallbacks
 import { getSocialIconFromLink } from '@/utils/socialIcons';
@@ -88,8 +89,21 @@ const Contact = () => {
         description="Contact Sugyan Sagar for media inquiries, collaborations, story ideas, or speaking engagements. Award-winning investigative journalist available for interviews and consultations."
         keywords="Contact Sugyan Sagar, Sugyansagar contact, journalist contact, media inquiries, collaboration, story ideas"
         type="website"
-        canonicalUrl={`${ENV.SITE_URL || 'https://sugyansagar.com'}/contact`}
+        canonicalUrl={`${ENV.SITE_URL || 'https://www.sugyansagar.com'}/contact`}
       />
+      
+      {/* Contact Page Schema */}
+      {displayProfile && (
+        <SchemaMarkup type="Person" data={{
+          name: displayProfile.name || 'Sugyan Sagar',
+          url: `${ENV.SITE_URL || 'https://www.sugyansagar.com'}/contact`,
+          email: displayProfile.email,
+          description: displayProfile.short_bio || displayProfile.bio,
+          sameAs: (displaySocialLinks || [])
+            .filter(link => link.is_active !== false && link.url)
+            .map(link => link.url),
+        }} />
+      )}
 
       <div className="contact-page">
         <div className="section">

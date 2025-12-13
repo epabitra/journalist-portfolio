@@ -110,7 +110,7 @@ const NewsDetail = () => {
     : Array.isArray(post.tags) ? post.tags : [];
 
   // Prepare schema data - use NEWS route for news posts
-  const articleUrl = `${ENV.SITE_URL || 'https://sugyansagar.com'}${APP_ROUTES.NEWS}/${post.slug}`;
+  const articleUrl = `${ENV.SITE_URL || 'https://www.sugyansagar.com'}${APP_ROUTES.NEWS}/${post.slug}`;
   const articleSchemaData = {
     headline: post.seo_title || post.title,
     description: post.seo_description || post.excerpt || post.title,
@@ -127,8 +127,8 @@ const NewsDetail = () => {
   // Breadcrumb schema - use News instead of Blog
   const breadcrumbData = {
     items: [
-      { name: 'Home', url: ENV.SITE_URL || 'https://sugyansagar.com' },
-      { name: 'News', url: `${ENV.SITE_URL || 'https://sugyansagar.com'}${APP_ROUTES.NEWS}` },
+      { name: 'Home', url: ENV.SITE_URL || 'https://www.sugyansagar.com' },
+      { name: 'News', url: `${ENV.SITE_URL || 'https://www.sugyansagar.com'}${APP_ROUTES.NEWS}` },
       { name: post.title, url: articleUrl },
     ],
   };
