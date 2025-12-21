@@ -4,7 +4,24 @@ import path from 'path';
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react(),
+    // Plugin to copy index.html to 404.html for GitHub Pages SPA support
+    // This ensures that when GitHub Pages returns 404, it serves index.html
+    // which allows React Router to handle the routing
+    {
+      name: 'copy-404',
+      closeBundle() {
+        const fs = require('fs');
+        const indexPath = path.resolve(__dirname, 'dist', 'index.html');
+        const notFoundPath = path.resolve(__dirname, 'dist', '404.html');
+        if (fs.existsSync(indexPath)) {
+          fs.copyFileSync(indexPath, notFoundPath);
+          console.log('✅ Copied index.html to 404.html for GitHub Pages SPA routing');
+        }
+      },
+    },
+  ],
   base: '/',
   resolve: {
     alias: {
@@ -49,4 +66,3 @@ export default defineConfig({
     strictPort: true,
   },
 });
-
