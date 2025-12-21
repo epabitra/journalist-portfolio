@@ -136,7 +136,7 @@ const NewsDetail = () => {
   return (
     <>
       <EnhancedHelmet
-        title={`${post.seo_title || post.title} | ${ENV.SITE_NAME}`}
+        title={post.seo_title || post.title}
         description={post.seo_description || post.excerpt || post.title}
         keywords={`${post.seo_title || post.title}, Sugyan Sagar, ${tags.join(', ')}, journalism, news, article`}
         image={post.cover_image_url || post.media_url}

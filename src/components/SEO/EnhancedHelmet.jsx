@@ -35,8 +35,20 @@ const EnhancedHelmet = ({
   // Default image - ensure absolute URL
   let ogImage = image || `${siteUrl}/og-image.jpg`;
   // If image is provided but not absolute, make it absolute
-  if (image && !image.startsWith('http://') && !image.startsWith('https://')) {
-    ogImage = image.startsWith('/') ? `${siteUrl}${image}` : `${siteUrl}/${image}`;
+  if (image && image.trim()) {
+    if (!image.startsWith('http://') && !image.startsWith('https://')) {
+      ogImage = image.startsWith('/') ? `${siteUrl}${image}` : `${siteUrl}/${image}`;
+    } else {
+      ogImage = image;
+    }
+  }
+  
+  // Remove trailing slash if present in image URL (but preserve query params and fragments)
+  ogImage = ogImage.replace(/([^\/])\/$/, '$1');
+  
+  // Ensure image URL uses https:// for better compatibility with social media crawlers
+  if (ogImage && ogImage.startsWith('http://')) {
+    ogImage = ogImage.replace('http://', 'https://');
   }
 
   return (
@@ -56,12 +68,14 @@ const EnhancedHelmet = ({
       {/* Open Graph / Facebook */}
       <meta property="og:type" content={type} />
       <meta property="og:url" content={currentUrl} />
-      <meta property="og:title" content={fullTitle} />
+      <meta property="og:title" content={title || fullTitle} />
       <meta property="og:description" content={defaultDescription} />
       <meta property="og:image" content={ogImage} />
+      <meta property="og:image:secure_url" content={ogImage} />
+      <meta property="og:image:type" content="image/jpeg" />
       <meta property="og:image:width" content="1200" />
       <meta property="og:image:height" content="630" />
-      <meta property="og:image:alt" content={fullTitle} />
+      <meta property="og:image:alt" content={title || fullTitle} />
       <meta property="og:site_name" content={ENV.SITE_NAME || 'Sugyan Sagar'} />
       <meta property="og:locale" content="en_US" />
       <meta property="og:locale:alternate" content="en_IN" />
@@ -71,10 +85,11 @@ const EnhancedHelmet = ({
       <meta name="twitter:site" content="@sugyansagar" />
       <meta name="twitter:creator" content="@sugyansagar" />
       <meta name="twitter:url" content={currentUrl} />
-      <meta name="twitter:title" content={fullTitle} />
+      <meta name="twitter:title" content={title || fullTitle} />
       <meta name="twitter:description" content={defaultDescription} />
       <meta name="twitter:image" content={ogImage} />
-      <meta name="twitter:image:alt" content={fullTitle} />
+      <meta name="twitter:image:src" content={ogImage} />
+      <meta name="twitter:image:alt" content={title || fullTitle} />
 
       {/* Article specific meta tags */}
       {type === 'article' && publishedTime && (
