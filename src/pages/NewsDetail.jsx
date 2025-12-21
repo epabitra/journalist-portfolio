@@ -281,6 +281,10 @@ const NewsDetail = () => {
             const shareUrl = `${siteUrl}/index.html?page=news&slug=${encodeURIComponent(post.slug)}`;
             // Keep clean URL for display/copy
             const cleanUrl = articleUrl || window.location.href;
+            
+            // Debug log to verify URL generation (remove in production if needed)
+            console.log('Share URL generated:', shareUrl);
+            
             const shareTitle = post.title || '';
             const shareDescription = post.excerpt || post.subtitle || post.title || '';
             const shareText = `${shareTitle}${shareDescription ? ` - ${shareDescription}` : ''}`;
