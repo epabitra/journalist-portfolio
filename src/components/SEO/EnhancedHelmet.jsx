@@ -5,6 +5,7 @@
 
 import { Helmet } from 'react-helmet-async';
 import { useLocation } from 'react-router-dom';
+import { useEffect } from 'react';
 import { ENV } from '@/config/env';
 
 const EnhancedHelmet = ({
@@ -50,6 +51,41 @@ const EnhancedHelmet = ({
   if (ogImage && ogImage.startsWith('http://')) {
     ogImage = ogImage.replace('http://', 'https://');
   }
+
+  // Also set meta tags directly in document head for better crawler compatibility
+  useEffect(() => {
+    // Set or update meta tags in document head
+    const setMetaTag = (property, content, isProperty = false) => {
+      if (!content) return;
+      const attribute = isProperty ? 'property' : 'name';
+      let element = document.querySelector(`meta[${attribute}="${property}"]`);
+      if (!element) {
+        element = document.createElement('meta');
+        element.setAttribute(attribute, property);
+        document.head.appendChild(element);
+      }
+      element.setAttribute('content', content);
+    };
+
+    // Open Graph tags
+    setMetaTag('og:type', type, true);
+    setMetaTag('og:url', currentUrl, true);
+    setMetaTag('og:title', title || fullTitle, true);
+    setMetaTag('og:description', defaultDescription, true);
+    setMetaTag('og:image', ogImage, true);
+    setMetaTag('og:image:secure_url', ogImage, true);
+    setMetaTag('og:image:width', '1200', true);
+    setMetaTag('og:image:height', '630', true);
+    setMetaTag('og:image:alt', title || fullTitle, true);
+    setMetaTag('og:site_name', ENV.SITE_NAME || 'Sugyan Sagar', true);
+    
+    // Twitter tags
+    setMetaTag('twitter:card', 'summary_large_image');
+    setMetaTag('twitter:title', title || fullTitle);
+    setMetaTag('twitter:description', defaultDescription);
+    setMetaTag('twitter:image', ogImage);
+    setMetaTag('twitter:image:src', ogImage);
+  }, [type, currentUrl, title, fullTitle, defaultDescription, ogImage]);
 
   return (
     <Helmet>

@@ -111,10 +111,23 @@ const BlogDetail = () => {
 
   // Prepare schema data
   const articleUrl = `${ENV.SITE_URL || 'https://www.sugyansagar.com'}${APP_ROUTES.BLOG}/${post.slug}`;
+  
+  // Get the best image for OG tags - prefer cover image, then first media URL, then media_url
+  let ogImage = post.cover_image_url;
+  if (!ogImage && post.media_urls) {
+    const mediaUrls = Array.isArray(post.media_urls) 
+      ? post.media_urls 
+      : (typeof post.media_urls === 'string' ? JSON.parse(post.media_urls || '[]') : []);
+    ogImage = mediaUrls.find(url => url && url.trim() && !url.includes('youtube.com') && !url.includes('youtu.be'));
+  }
+  if (!ogImage) {
+    ogImage = post.media_url;
+  }
+  
   const articleSchemaData = {
     headline: post.seo_title || post.title,
     description: post.seo_description || post.excerpt || post.title,
-    image: post.cover_image_url || post.media_url,
+    image: ogImage,
     authorName: post.author_name || 'Sugyan Sagar',
     authorUrl: `${ENV.SITE_URL || 'https://www.sugyansagar.com'}/about`,
     url: articleUrl,
@@ -139,7 +152,7 @@ const BlogDetail = () => {
         title={post.seo_title || post.title}
         description={post.seo_description || post.excerpt || post.title}
         keywords={`${post.seo_title || post.title}, Sugyan Sagar, ${tags.join(', ')}, journalism, news, article`}
-        image={post.cover_image_url || post.media_url}
+        image={ogImage}
         type="article"
         author={post.author_name || 'Sugyan Sagar'}
         publishedTime={post.published_at}
