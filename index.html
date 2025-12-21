@@ -63,6 +63,27 @@
     <!-- Preconnect for Performance -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+    
+    <!-- Query Parameter Handler for Social Sharing -->
+    <!-- This handles URLs like index.html?page=news&slug=article-slug to avoid 404s -->
+    <script>
+      (function() {
+        // Parse URL query parameters
+        const params = new URLSearchParams(window.location.search);
+        const page = params.get('page'); // 'blog' or 'news'
+        const slug = params.get('slug');
+        
+        // If we have page and slug parameters, redirect to clean URL
+        // This avoids 404 errors while keeping clean URLs for users
+        // Facebook's crawler will follow the redirect and see React-rendered meta tags
+        if (page && slug && (page === 'blog' || page === 'news')) {
+          const cleanUrl = '/' + page + '/' + slug;
+          // Use replace to avoid adding to history
+          window.location.replace(cleanUrl);
+        }
+      })();
+    </script>
+    
     <style>
       /* Loading and error styles */
       .loading-fallback {

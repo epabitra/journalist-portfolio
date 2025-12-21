@@ -275,29 +275,35 @@ const NewsDetail = () => {
 
           {/* Share Section */}
           {(() => {
-            const shareUrl = articleUrl || window.location.href;
+            // Prepare share data - use query param format to avoid 404 on GitHub Pages
+            // Format: index.html?page=news&slug=article-slug (returns 200, then redirects)
+            const siteUrl = ENV.SITE_URL || 'https://www.sugyansagar.com';
+            const shareUrl = `${siteUrl}/index.html?page=news&slug=${encodeURIComponent(post.slug)}`;
+            // Keep clean URL for display/copy
+            const cleanUrl = articleUrl || window.location.href;
             const shareTitle = post.title || '';
             const shareDescription = post.excerpt || post.subtitle || post.title || '';
             const shareText = `${shareTitle}${shareDescription ? ` - ${shareDescription}` : ''}`;
             
             const shareLinks = {
               twitter: `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`,
-              facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}&quote=${encodeURIComponent(shareText)}`,
+              facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`,
               linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`,
               whatsapp: `https://wa.me/?text=${encodeURIComponent(`${shareText} ${shareUrl}`)}`,
               telegram: `https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareText)}`,
-              email: `mailto:?subject=${encodeURIComponent(shareTitle)}&body=${encodeURIComponent(`${shareDescription}\n\nRead more: ${shareUrl}`)}`,
+              email: `mailto:?subject=${encodeURIComponent(shareTitle)}&body=${encodeURIComponent(`${shareDescription}\n\nRead more: ${cleanUrl}`)}`,
               reddit: `https://reddit.com/submit?url=${encodeURIComponent(shareUrl)}&title=${encodeURIComponent(shareTitle)}`,
             };
 
+            // Copy to clipboard function - use clean URL for copying
             const handleCopyLink = async () => {
               try {
-                await navigator.clipboard.writeText(shareUrl);
+                await navigator.clipboard.writeText(cleanUrl);
                 alert('Link copied to clipboard!');
               } catch (err) {
                 console.error('Failed to copy:', err);
                 const textArea = document.createElement('textarea');
-                textArea.value = shareUrl;
+                textArea.value = cleanUrl;
                 document.body.appendChild(textArea);
                 textArea.select();
                 document.execCommand('copy');
