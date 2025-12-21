@@ -37,55 +37,73 @@ const EnhancedHelmet = ({
   let ogImage = image || `${siteUrl}/og-image.jpg`;
   // If image is provided but not absolute, make it absolute
   if (image && image.trim()) {
-    if (!image.startsWith('http://') && !image.startsWith('https://')) {
-      ogImage = image.startsWith('/') ? `${siteUrl}${image}` : `${siteUrl}/${image}`;
+    const trimmedImage = image.trim();
+    if (!trimmedImage.startsWith('http://') && !trimmedImage.startsWith('https://')) {
+      ogImage = trimmedImage.startsWith('/') ? `${siteUrl}${trimmedImage}` : `${siteUrl}/${trimmedImage}`;
     } else {
-      ogImage = image;
+      ogImage = trimmedImage;
     }
   }
   
   // Remove trailing slash if present in image URL (but preserve query params and fragments)
-  ogImage = ogImage.replace(/([^\/])\/$/, '$1');
+  ogImage = ogImage.replace(/([^\/\?])\/$/, '$1');
   
   // Ensure image URL uses https:// for better compatibility with social media crawlers
   if (ogImage && ogImage.startsWith('http://')) {
     ogImage = ogImage.replace('http://', 'https://');
   }
+  
+  // Validate image URL format - must be a valid URL
+  try {
+    new URL(ogImage);
+  } catch (e) {
+    // If invalid URL, fallback to default
+    console.warn('Invalid OG image URL:', ogImage, 'Using default');
+    ogImage = `${siteUrl}/og-image.jpg`;
+  }
 
   // Also set meta tags directly in document head for better crawler compatibility
+  // Run immediately (useLayoutEffect runs synchronously before paint)
   useEffect(() => {
     // Set or update meta tags in document head
     const setMetaTag = (property, content, isProperty = false) => {
       if (!content) return;
       const attribute = isProperty ? 'property' : 'name';
-      let element = document.querySelector(`meta[${attribute}="${property}"]`);
-      if (!element) {
-        element = document.createElement('meta');
-        element.setAttribute(attribute, property);
-        document.head.appendChild(element);
+      // Remove existing meta tag if it exists
+      const existing = document.querySelector(`meta[${attribute}="${property}"]`);
+      if (existing) {
+        existing.remove();
       }
+      // Create new meta tag
+      const element = document.createElement('meta');
+      element.setAttribute(attribute, property);
       element.setAttribute('content', content);
+      document.head.appendChild(element);
     };
 
-    // Open Graph tags
+    // Open Graph tags - set immediately
     setMetaTag('og:type', type, true);
     setMetaTag('og:url', currentUrl, true);
     setMetaTag('og:title', title || fullTitle, true);
     setMetaTag('og:description', defaultDescription, true);
-    setMetaTag('og:image', ogImage, true);
-    setMetaTag('og:image:secure_url', ogImage, true);
-    setMetaTag('og:image:width', '1200', true);
-    setMetaTag('og:image:height', '630', true);
-    setMetaTag('og:image:alt', title || fullTitle, true);
+    if (ogImage) {
+      setMetaTag('og:image', ogImage, true);
+      setMetaTag('og:image:secure_url', ogImage, true);
+      setMetaTag('og:image:width', '1200', true);
+      setMetaTag('og:image:height', '630', true);
+      setMetaTag('og:image:alt', title || fullTitle, true);
+    }
     setMetaTag('og:site_name', ENV.SITE_NAME || 'Sugyan Sagar', true);
     
     // Twitter tags
     setMetaTag('twitter:card', 'summary_large_image');
     setMetaTag('twitter:title', title || fullTitle);
     setMetaTag('twitter:description', defaultDescription);
-    setMetaTag('twitter:image', ogImage);
-    setMetaTag('twitter:image:src', ogImage);
-  }, [type, currentUrl, title, fullTitle, defaultDescription, ogImage]);
+    if (ogImage) {
+      setMetaTag('twitter:image', ogImage);
+      setMetaTag('twitter:image:src', ogImage);
+    }
+  }, [type, currentUrl, title, fullTitle, defaultDescription, ogImage, ENV.SITE_NAME]);
 
   return (
     <Helmet>
